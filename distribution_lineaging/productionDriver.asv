@@ -1,0 +1,28 @@
+%top level production driver for running lineage assuming that esequence
+%and parameter data structure area already in current workspace
+
+trackingparameters.trainingmode=false;
+trackingparameters.recordanswers=false;
+
+
+parameterConfiguration;
+evalforced=false;
+
+ endtime=end_time;
+ trackingparameters.endtime=endtime;
+ trackingparameters.anisotropyvector=[1,1,anisotropy];
+parameters.anisotropyvector=[1,1,anisotropy];
+
+ embryonumbers = {};
+nucleidir=basedir;
+embryonumbers_c={[lineages{lin},'_edited\nuclei\']};
+%endtime=edittimes(lin)+11;
+   outputdirectory=[lineages{lin},'/nuclei/'];
+ train_tracking_statistics_function;
+ train_confidence_function;
+ 
+endtime=endtime+10;
+trackingparameters.endtime=trackingparameters.endtime+10;
+trackingparameters.recordanswers=false;
+
+tracking_driver_new_classifier_based_version;

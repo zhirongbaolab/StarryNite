@@ -1,0 +1,22 @@
+function [candidates,candidates_t]=findBackwardCandidatesTime(esequence,i,t,trackingparameters);
+      
+% finds possible backward gap matches of start i at time t at
+%previous mindpoint ts
+candidates=[];
+candidates_t=[];
+temporalcutoff=trackingparameters.temporalcutoff;
+for offset=2:temporalcutoff
+    if(t-offset>=1)
+        spatialcutoff=trackingparameters.forwardcutoff(t-offset);
+        distances=distance_anisotropic(esequence{t}.finalpoints(i,:)',esequence{t-offset}.finalpoints',trackingparameters.anisotropyvector);
+        %within cutoff and a midpoint
+        ccandidates=find(~esequence{t-offset}.delete&distances'<spatialcutoff&esequence{t-offset}.suc(:,1)==-1);
+%now just not full
+        % ccandidates=find(distances'<spatialcutoff&esequence{t-offset}.suc(:,2)==-1);
+        candidates=[candidates;ccandidates];
+        candidates_t=[candidates_t;ones(size(ccandidates))*t-offset];
+    end
+end
+
+end
+
