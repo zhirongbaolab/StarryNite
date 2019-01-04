@@ -1,16 +1,19 @@
 %read previous labeled timestep to simulate using previous step nuclear
 %diameter to set filter size
 
-
+if(~exist('usestaticdiameter'))
+    usestaticdiameter=false;
+end
 
 if (nodatause||nodata)
 
-    if(isstruct(previous))
+    if(isstruct(previous)&~usestaticdiameter)
         if(~isempty(previous.diams)&&length(previous.diams)>10) %update only if found cells last time otherwise dont do anything
             celldiameter=mean(previous.diams);%max(mean(previous.diams),celldiameter*.9);%limit to drop of 10% per TP
         end
     else
         celldiameter=firsttimestepdiam*downsample;
+        'static diameter'
     end
 else
     nuclei=[nucleibase,'t',num2str(time-1,'%03d'),'-nuclei'];
@@ -40,9 +43,21 @@ maximathreshold=getParameter('intensitythreshold',numcells);
 
 Xorig=X;
 sizes=size(X);
-
-
-
+%{
+fish=true;
+if(fish)
+        thresimage=Xr;
+threshhold=1735; 1755; %1780; %1755;%2600;% 1755*1.3;%eh? 1780;%1780;
+thresimage(thresimage>threshhold)=threshhold;
+%thresimage=thresimage./1780;
+thresimage=thresimage-(min(min(min(thresimage))));
+thresimage=thresimage./(max(max(max(thresimage))));
+%thresimage=log(thresimage);
+thresimage=thresimage.^5;%originally 4
+X=thresimage.*X;
+%figure;imagesc(max(thresimage,[],3));
+end
+%}
 
 %----------------------------------------------------------------------
 %original code: takes less memory but is 50 times slower in a single thread
@@ -64,7 +79,16 @@ sigB = siz2B/(4*sqrt(2*log(2)));
 X=imgaussianAnisotropy(single(X),sigA,siz2A)-imgaussianAnisotropy(single(X),sigB,siz2B);
 %-----------------------------------------------------------------
 
+
 end
+%{
+fish=true;
+if (fish)
+X(Xr<1755)=0;
+end
+%}
+%figure;imagesc(max(X,[],3));
+
 %if(isnan(max(max(max(X)))))
 %    X=zeros(size(X));
 %end
@@ -93,13 +117,11 @@ diskSet=calculateSliceGFP(Xorig,diskSet);
   e.diskintensity=diskSet.xymaximavals;
     e.diskGFPsums=diskSet.GFPsums;
       e.diskArea=diskSet.diskArea;
-      
+            e.diskMax=diskSet.diskMax;
 if(savedata)
   
   
-    e.xpositions=diskSet.xpositions;
-    e.ypositions=diskSet.ypositions;
-    e.sliceCenters=diskSet.centeredxymax;
+
     e.numcells=numcells;
     e.celldiameter=celldiameter;
     e.sigma=sigma;
@@ -109,6 +131,9 @@ if(savedata)
     e.firstroundlength=temp(1);
     e.lowcoverage=length(find(diskSet.xycoverage(nucleiSet.centerindicies)<13));
 end
+    e.sliceCenters=diskSet.centeredxymax;
+    e.xpositions=diskSet.xpositions;
+    e.ypositions=diskSet.ypositions;
 
 %iteratively do extra rounds till nothing is left over results are
 %concatenated on

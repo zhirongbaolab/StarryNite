@@ -33,9 +33,11 @@ for i=trackingparameters.starttime:trackingparameters.endtime
     
     
     %integrate GFP
-    [integratedGFP,area]=integrateGFP(esequence{i},parameters);
+    [integratedGFP,area,maxslice,diskMax]=integrateGFP(esequence{i},parameters);
     esequence{i}.totalGFP=integratedGFP;
     esequence{i}.avgGFP=integratedGFP./area;
+    esequence{i}.maxslice=maxslice;
+    esequence{i}.mdiskMax=diskMax;
     else
         trackingparameters.forwardcutoff(i)=-1;%1.5;%candidate cutoff (distance)
         esequence{i}.selfdistance=[];
@@ -46,7 +48,7 @@ end
 
 
 if (isfield(trackingparameters,'abscutoff')&&trackingparameters.abscutoff)
-    'working'
+    'absolute tracking working working'
     trackingparameters.forwardcutoff=trackingparameters.candidateCutoff*ones(size(trackingparameters.forwardcutoff));
 end
 

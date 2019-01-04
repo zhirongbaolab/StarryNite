@@ -13,8 +13,18 @@ end
 %Xmax2d(:,:,zlevel:s(3))=0;
 twodmax=find(Xmax2d);
 
-twodmax=twodmax(X(twodmax)>maximathreshold);%apply threshold to maximas
 
+twodmax=twodmax(X(twodmax)>maximathreshold);%apply threshold to maximas
+%{
+%'warning fish hack active'
+Xr=imresize(Xr,.5);
+for i=1:size(Xr,3)
+Xr(:,:,i)=medfilt2(Xr(:,:,i),[13,13],'symmetric');
+end
+Xr=imresize(Xr,2);
+
+twodmax=twodmax(Xr(twodmax)>1750);%was 1740 more aggressive filtering should allow to rais it
+%}
 [x,y,z]=ind2sub(s,twodmax);
 
 %filter to ROI region if it exists

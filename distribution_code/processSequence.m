@@ -18,7 +18,7 @@ if(~exist('MATLAB_STACK'))
     MATLAB_STACK=false;
 end
 if(~exist('flipstack'))
-    flipstack=true;
+    flipstack=false;
 end
 if (~exist('outputSlice_linptile'))
     outputSlice_linptile=99.99;
@@ -60,27 +60,36 @@ for example=1:length(tlist)
                 %end
                 Xr=im2double(((loadCellStackMetamorph([embryodir,embryonumber],time,1,slices,[0,0,0,0],zeropadding))));
             end
-            %our scope images are mirrored L,R
-            
-            if(flipstack)
-                for s=1:size(X,3)
-                    X(:,:,s)=fliplr(X(:,:,s));
-                    Xr(:,:,s)=fliplr(Xr(:,:,s));
-                end
-            end
+
         else
             if(LSM_time)
                 X=im2single(loadCellStackLSMtime([embryodir,embryonumber],time,LSM_channel,slices));
             else
                 if (SIMPLETIFF)
-                    name=[embryodir,embryonumber,time_prefix,num2str(time),'.tif'];
-                    X=im2double(loadSimpleStackTiff(name));
+                    imagefilename=[embryodir,embryonumber,time_prefix,num2str(time),'.tif'];
+                    X=im2double(loadSimpleStackTiff(imagefilename));
+                    if(slices<size(X,3))
+                        X=X(:,:,1:slices);
+                    end
                 else
-                    X=im2single((loadCellStack([embryodir,embryonumber],slices,time)));
+                    delim1='_';delim2='-';
+                    X=loadCellStack([embryodir,embryonumber],slices,time,delim1,delim2);
+                    %X=im2single((loadCellStack([embryodir,embryonumber],slices,time)));
                 end
             end
         end
     end
+    
+                %our scope images are mirrored L,R
+            
+            if(flipstack)
+                for s=1:size(X,3)
+                    X(:,:,s)=fliplr(X(:,:,s));
+                    if (exist('Xr'))
+                    Xr(:,:,s)=fliplr(Xr(:,:,s));
+                    end
+                end
+            end
     
     if(rednuclei)
         expind=2;
@@ -142,13 +151,19 @@ for example=1:length(tlist)
         end
     end
     
-    clear Xr;
+    %clear Xr;
     
     if(ROI)
         X=X(ROIymin:ROIymax,ROIxmin:ROIxmax,:);
+        if(exist('Xr'))
+        Xr=Xr(ROIymin:ROIymax,ROIxmin:ROIxmax,:);
+        end
     end
     
     X=imresize(X,downsample);
+    if(exist('Xr'))
+        Xr=imresize(Xr,downsample);
+    end
     
     svol=size(X);
     
@@ -291,7 +306,7 @@ end
 
 %output results to SN 
 
-if (SNoutput)
+
 %{
     alli=[];
     for i=1:length(esequence)
@@ -357,7 +372,7 @@ end
     else
        name=[embryonumber,'_',suffix];
     end
-    
+if (SNoutput)    
     if(ROI)
         outputSNFiles(embryodir,name,esequence,min(tlist),max(tlist),downsample,ROIxmin,ROIymin);
     else
@@ -369,10 +384,3 @@ end
     %end
 end
 
-
-
-if(exist('bigfile')&&bigfile==true)
-    save([embryodir,name,'_fullmatlabresult.mat'],'-v7.3');
-else
-    save([embryodir,name,'_fullmatlabresult.mat']);
-end

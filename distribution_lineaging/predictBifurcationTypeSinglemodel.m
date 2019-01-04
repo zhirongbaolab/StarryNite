@@ -2,10 +2,16 @@
 function predicted_class = predictBifurcationTypeSinglemodel(...
     alldaughterdata,allforwarddata,allbackdata,d1length,d2length,...
     FNbackcand1lengths,FNbackcand2lengths,bestFNForwardLengthD1,...
-    bestFNForwardLengthD2,bestFNBackCorrect,trackingparameters,bestIndex, count)
+    bestFNForwardLengthD2,bestFNBackCorrect,trackingparameters,bestIndex, count,forcemode)
 %given all data about bifurcation broken into 3 blocks
 %classify bifurcation with topology of bifurcation determining which blocks
 %are present/relevant
+
+%force classifier to not give up, picking the best option excluding the
+%other class
+if ~exist('forcemode')
+    forcemode=false;
+end
 
 global computedclassificationvector;
 global refclassificationvector;
@@ -63,7 +69,18 @@ topclass(logical(DivFPLooking))=5;
 %}
     
  predicted_class=predict(trackingparameters.bifurcationclassifier.classifiermodel,data,'HandleMissing','on');
-
+    if(forcemode&predicted_class==0)
+         posteriors_class=posterior(trackingparameters.bifurcationclassifier.classifiermodel,data,'HandleMissing','on');
+            posteriors_class(1)=0;%null out other
+            
+            posteriors_class(4)=0;%null out FP
+            [val,ind]=max(posteriors_class);
+       
+        %why was this line this it makes no sense
+        
+        %predicted_class=classvals(ind-1);
+        predicted_class=ind-1;
+    end
 
 %store computed class
 computedclassificationvector=[computedclassificationvector,predicted_class];
@@ -71,7 +88,11 @@ computedclassificationvector=[computedclassificationvector,predicted_class];
 %classifier sometimes fails in unexplored parts of space
 if(isnan(predicted_class))
     'Nan returned as class label, unexpected or nan input input vector'
-    predicted_class=0;
+    if(forcemode)
+         predicted_class=1;
+     else
+        predicted_class=0;
+     end
 end
 
 
