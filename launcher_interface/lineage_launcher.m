@@ -22,7 +22,7 @@ function varargout = lineage_launcher(varargin)
 
 % Edit the above text to modify the response to help lineage_launcher
 
-% Last Modified by GUIDE v2.5 10-Sep-2010 09:55:47
+% Last Modified by GUIDE v2.5 04-Jan-2019 15:41:06
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -481,3 +481,19 @@ function makeslices_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of makeslices
+
+
+% --- Executes on button press in pushbutton14.
+function pushbutton14_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton14 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in flipimagesbox.
+function flipimagesbox_Callback(hObject, eventdata, handles)
+% hObject    handle to flipimagesbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of flipimagesbox

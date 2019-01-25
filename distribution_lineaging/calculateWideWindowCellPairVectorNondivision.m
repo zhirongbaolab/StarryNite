@@ -1,8 +1,8 @@
 function [ data ] = calculateWideWindowCellPairVectorNondivision(esequence,t,i,t2,j,anisotropyvector,wideWindow)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-gapvector=calculateCellPairVectorNondivision_wdiam(esequence{t},i,esequence{t2},esequence{t}.suc(i,1),anisotropyvector);
-
+gapvector=calculateCellPairVectorNondivision_wdiam(esequence{t},i,esequence{t2},j,anisotropyvector);
+%calculateWideWindowCellPairVectorNondivision(esequence,t,i,esequence{t}.suc_time(i,d),esequence{t}.suc(i,d),trackingparameters.anisotropyvector,trackingparameters.wideWindow)
 beforevectors=[];
 curr=i;
 curr_t=t;

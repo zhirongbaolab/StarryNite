@@ -44,7 +44,7 @@ for t=trackingparameters.endtime:-1:trackingparameters.starttime+1
       
         [minscore,imin]=min(scores);
         %concatenate best candidate into long sucessor vector
-        if(~isempty(imin))
+        if(~isempty(imin)&&~(esequence{t-1}.delete(candidates(imin))==1))
             esequence{t}.bNN(i)=candidates(imin);
             esequence{t-1}.sucessor_suitors{candidates(imin)}=[esequence{t-1}.sucessor_suitors{candidates(imin)};i];
             esequence{t-1}.sucessor_suitors_score{candidates(imin)}=[esequence{t-1}.sucessor_suitors_score{candidates(imin)};minscore];
@@ -78,7 +78,7 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
         [minscore,imin]=min(scores);
 
         %concatenate best candidate into long sucessor vector
-        if(~isempty(imin))
+        if(~isempty(imin)&&~(esequence{t+1}.delete(candidates(imin))==1))
             esequence{t}.fNN(i)=candidates(imin);
         esequence{t+1}.predecessor_suitors{candidates(imin)}=[esequence{t+1}.predecessor_suitors{candidates(imin)};i];
         esequence{t+1}.predecessor_suitors_score{candidates(imin)}=[esequence{t+1}.predecessor_suitors_score{candidates(imin)};minscore];
