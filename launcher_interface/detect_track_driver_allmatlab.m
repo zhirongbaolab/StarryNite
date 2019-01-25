@@ -94,8 +94,26 @@ if(start_time~=1)
             esequence{start_time+i-1}=tempesequence{i};
         end
     end
-%}    
+    %}
+  %{ 
+if(MATLAB_STACK)
+        tempv=ROIxmin;
+        ROIxmin=ROIymin;
+        ROIymin=tempv;
+    end
+%}
     saveGreedyNucleiFiles(esequence,endtime,[outputdirectory,suffix,embryonumber,'/nuclei'],anisotropy,ROIxmin,ROIymin);
+  
+     %esequence_con= scoreLinkConfidence(esequence,trackingparameters);
+     %saveGreedyNucleiFilesAndConfidence(esequence_con,trackingparameters.endtime, trimmed_outputdirectory,anisotropy,ROIxmin,ROIymin,0,false);
+   
+%move output here to save matlab version after tracking
+if(exist('bigfile')&&bigfile==true)
+    save([embryodir,name,'_fullmatlabresult.mat'],'-v7.3');
+else
+    save([embryodir,name,'_fullmatlabresult.mat']);
+end
+
 else
       %now done in detection 
       %{
@@ -152,7 +170,7 @@ if (newimage)
     fprintf (file,'<useStack type="1"/>\n');
     fprintf (file,['<image file="',embryodir,embryonumber,'_t1.tif"/>\n']);
 else
-    fprintf (file,['<image file="',embryodir,'image/tif/',embryonumber,'-t001-p01.tif"/>\n']);
+     fprintf (file,['<image file="',embryodir,'image/tif/',embryonumber,'-t',num2str(start_time,'%03d'),'-p01.tif"/>\n']);
 end
 fprintf (file,['<nuclei file="',zipnameedited,'"/>\n']);
 
@@ -174,10 +192,10 @@ system([' java -Xmx500m -cp acebatch2.jar Measure1 ',xmlname]);
 'running expression'
 if(runexpression)
 if(~isred)
-     system(['java -cp acebatch2.jar SixteenBitGreenExtractor1 ',xmlname,' 400']);  
+     system(['java -cp acebatch2.jar SixteenBitGreenExtractor1 ',xmlname,' ',num2str(end_time)]);  
   
 else
-     system(['java -cp acebatch2.jar SixteenBitRedExtractor1 ',xmlname,' 400']);    
+     system(['java -cp acebatch2.jar SixteenBitRedExtractor1 ',xmlname,' ',num2str(end_time)]);    
 end
 end
 

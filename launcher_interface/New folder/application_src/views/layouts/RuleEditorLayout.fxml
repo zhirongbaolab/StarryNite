@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Bao Lab 2016
+  -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<fx:root xmlns:fx="http://javafx.com/fxml/1" type="AnchorPane" xmlns="http://javafx.com/javafx/8">
+   <children>
+      <VBox layoutX="26.0" layoutY="62.0" spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Text fx:id="heading" fontSmoothingType="LCD" lineSpacing="5.0" smooth="false" strokeType="OUTSIDE" strokeWidth="0.0" text="Search Options" wrappingWidth="210.0" VBox.vgrow="SOMETIMES">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Region maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="0.0" />
+            <Label text="Color:">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <HBox maxWidth="-Infinity" minWidth="-Infinity" prefWidth="190.0">
+               <children>
+                  <Region maxWidth="-Infinity" minWidth="-Infinity" prefWidth="30.0" />
+                  <Label fx:id="cellLabel" text="Cell Nucleus">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <CheckBox fx:id="cellCheckBox" mnemonicParsing="false">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+               </children>
+            </HBox>
+            <HBox maxWidth="-Infinity" minWidth="-Infinity" prefWidth="190.0">
+               <children>
+                  <Region maxWidth="-Infinity" minWidth="-Infinity" prefWidth="30.0" />
+                  <Label fx:id="cellBodyLabel" text="Cell Body">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <CheckBox fx:id="cellBodyCheckBox" mnemonicParsing="false">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+               </children>
+            </HBox>
+            <HBox maxWidth="-Infinity" minWidth="-Infinity" prefWidth="190.0">
+               <children>
+                  <Region maxWidth="-Infinity" minWidth="-Infinity" prefWidth="30.0" />
+                  <Label fx:id="ancestorsLabel" text="Its Ancestors">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <CheckBox fx:id="ancestorsCheckBox" mnemonicParsing="false">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+               </children>
+            </HBox>
+            <HBox maxWidth="-Infinity" minWidth="-Infinity" prefWidth="190.0">
+               <children>
+                  <Region maxWidth="-Infinity" minWidth="-Infinity" prefWidth="30.0" />
+                  <Label fx:id="descendantsLabel" text="Its Descendants">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <CheckBox fx:id="descendantsCheckBox" mnemonicParsing="false">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+               </children>
+            </HBox>
+            <Region maxWidth="1.7976931348623157E308" prefHeight="0.0" />
+            <ColorPicker fx:id="colorPicker" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="70.0" />
+            <Region layoutX="20.0" layoutY="172.0" maxWidth="1.7976931348623157E308" prefHeight="0.0" />
+            <HBox maxWidth="1.7976931348623157E308">
+               <children>
+                  <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="submitButton" mnemonicParsing="false" text="Submit">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</fx:root>

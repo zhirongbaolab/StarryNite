@@ -1,0 +1,31 @@
+/*
+ * Bao Lab 2017
+ */
+
+ /*
+  *  CSS for timeline chart
+  */
+
+
+.status-purple {
+    -fx-background-color:rgba(75,0,130);
+}
+
+.status-lightPurple {
+    -fx-background-color:rgba(147,112,219);
+}
+
+.status-lightGray {
+    -fx-background-color:rgba(211,211,211,7);
+}
+
+.chart {
+    -fx-padding: 10px;
+}
+.chart-content {
+    -fx-padding: 30px;
+}
+
+.onHover{
+    -fx-background-color: rgba(255,153,0);
+}

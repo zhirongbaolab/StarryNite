@@ -4,7 +4,8 @@ function [ esequence] ...
 
 %initialize 
 for t=1:trackingparameters.endtime-1
-esequence{t}.linkconfidences=zeros(size(esequence{t}.finalpoints,1),1);
+esequence{t}.linkconfidences=zeros(size(esequence{t}.finalpoints,1),3);
+%esequence{t}.linkconfidences=zeros(size(esequence{t}.finalpoints,1),1);
 end
 
 for t=1:trackingparameters.endtime-1
@@ -25,24 +26,10 @@ for t=1:trackingparameters.endtime-1
                confidence=trackingparameters.linkconfidencemodel.divlookup...
                    (round(confidence(1)*(length(trackingparameters.linkconfidencemodel.bins)-1))+1) ;
           % confidence=confidence(1);
-            esequence{t}.linkconfidences(i)=1-confidence;
-       
-            else
-                if(esequence{t}.suc_time(i,1)~=t+1)
-                    %measure gap  nondiv
-                    gapdata=[computeGapConfidenceVector(esequence, t, i,trackingparameters),stageinfo];
-                    confidence=posterior(trackingparameters.linkconfidencemodel.gap,...
-                        gapdata(:,trackingparameters.linkconfidencemodel.gapkeep));
-                     confidence(isnan(confidence))=1;%nan is presumed wrong
-                        confidence(isinf(confidence))=1;%nan is presumed wrong
-            %          confidence=confidence(1);
-                    confidence=trackingparameters.linkconfidencemodel.gaplookup...
-                        (round(confidence(1)*(length(trackingparameters.linkconfidencemodel.bins)-1))+1) ;
-                  esequence{t}.linkconfidences(i)=1-confidence;
-         
-                else
-                    %measure nondiv
-                    nondivdata= [computeNonDivisionConfidenceVector(esequence, t, i,trackingparameters),stageinfo];
+            esequence{t}.linkconfidences(i,1)=1-confidence;
+            
+            %bif side 1
+                                nondivdata= [computeNonDivisionConfidenceVector(esequence, t, i,1,trackingparameters),stageinfo];
                     confidence=posterior(trackingparameters.linkconfidencemodel.nondiv,...
                         nondivdata(:,trackingparameters.linkconfidencemodel.nondivkeep));
                     confidence(isnan(confidence))=1;%nan is presumed wrong
@@ -60,7 +47,63 @@ for t=1:trackingparameters.endtime-1
                             confidence=trackingparameters.linkconfidencemodel.nondivupperlimitp;
                         end
                     end
-                      esequence{t}.linkconfidences(i)=confidence;
+                      esequence{t}.linkconfidences(i,2)=confidence;
+                      %bif side 2
+                                                      nondivdata= [computeNonDivisionConfidenceVector(esequence, t, i,2,trackingparameters),stageinfo];
+                    confidence=posterior(trackingparameters.linkconfidencemodel.nondiv,...
+                        nondivdata(:,trackingparameters.linkconfidencemodel.nondivkeep));
+                    confidence(isnan(confidence))=1;%nan is presumed wrong
+                    confidence(isinf(confidence))=1;%nan is presumed wrong
+                    %for some reason I made this histogram the opposite way
+                    %around
+                    if((confidence(2))>trackingparameters.linkconfidencemodel.nondivlowerlimit&...
+                            (confidence(2))<trackingparameters.linkconfidencemodel.nondivupperlimit)
+                        confidence=trackingparameters.linkconfidencemodel.nondivlookup...
+                            (round((confidence(2))*(length(trackingparameters.linkconfidencemodel.nondivlookup)-1))+1);
+                    else
+                        if((confidence(2))<=trackingparameters.linkconfidencemodel.nondivlowerlimit)
+                            confidence=trackingparameters.linkconfidencemodel.nondivlowerlimitp;
+                        else
+                            confidence=trackingparameters.linkconfidencemodel.nondivupperlimitp;
+                        end
+                    end
+                      esequence{t}.linkconfidences(i,3)=confidence;
+                    
+       
+            else
+                if(esequence{t}.suc_time(i,1)~=t+1)
+                    %measure gap  nondiv
+                    gapdata=[computeGapConfidenceVector(esequence, t, i,trackingparameters),stageinfo];
+                    confidence=posterior(trackingparameters.linkconfidencemodel.gap,...
+                        gapdata(:,trackingparameters.linkconfidencemodel.gapkeep));
+                     confidence(isnan(confidence))=1;%nan is presumed wrong
+                        confidence(isinf(confidence))=1;%nan is presumed wrong
+            %          confidence=confidence(1);
+                    confidence=trackingparameters.linkconfidencemodel.gaplookup...
+                        (round(confidence(1)*(length(trackingparameters.linkconfidencemodel.bins)-1))+1) ;
+                  esequence{t}.linkconfidences(i,1)=1-confidence;
+         
+                else
+                    %measure nondiv
+                    nondivdata= [computeNonDivisionConfidenceVector(esequence, t, i,1,trackingparameters),stageinfo];
+                    confidence=posterior(trackingparameters.linkconfidencemodel.nondiv,...
+                        nondivdata(:,trackingparameters.linkconfidencemodel.nondivkeep));
+                    confidence(isnan(confidence))=1;%nan is presumed wrong
+                    confidence(isinf(confidence))=1;%nan is presumed wrong
+                    %for some reason I made this histogram the opposite way
+                    %around
+                    if((confidence(2))>trackingparameters.linkconfidencemodel.nondivlowerlimit&...
+                            (confidence(2))<trackingparameters.linkconfidencemodel.nondivupperlimit)
+                        confidence=trackingparameters.linkconfidencemodel.nondivlookup...
+                            (round((confidence(2))*(length(trackingparameters.linkconfidencemodel.nondivlookup)-1))+1);
+                    else
+                        if((confidence(2))<=trackingparameters.linkconfidencemodel.nondivlowerlimit)
+                            confidence=trackingparameters.linkconfidencemodel.nondivlowerlimitp;
+                        else
+                            confidence=trackingparameters.linkconfidencemodel.nondivupperlimitp;
+                        end
+                    end
+                      esequence{t}.linkconfidences(i,1)=confidence;
                     
                     %    confidence=trackingparameters.linkconfidencemodel.nondivlookup...
                     %         (round(confidence(1)*(length(trackingparameters.linkconfidencemodel.bins)-1))+1) ;
@@ -77,7 +120,7 @@ for t=1:trackingparameters.endtime-1
                     confidence(isnan(confidence))=1;%nan is presumed wrong
                    confidence=trackingparameters.linkconfidencemodel.deathlookup...
                        (round(confidence(1)*(length(trackingparameters.linkconfidencemodel.bins)-1))+1) ;
-                  esequence{t}.linkconfidences(i)=confidence;
+                  esequence{t}.linkconfidences(i,1)=confidence;
                    %confidence=confidence(1);
                 %    esequence{t}.linkconfidences(i)=1-confidence;
         end

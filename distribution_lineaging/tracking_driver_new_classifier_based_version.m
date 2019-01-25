@@ -18,8 +18,37 @@ end
 %#function wibble
 [trackingparameters,esequence]=initializeTrackingStructures(esequence,trackingparameters);
 
+%polar body filter before start tracking
+
+
 %linking
 esequence=linkEasyCases(esequence,trackingparameters);
+
+if (isfield(trackingparameters,'polarbodyfilter')&&trackingparameters.polarbodyfilter)
+    windowsize=10;
+    maxtime=min(trackingparameters.polarendtime,trackingparameters.endtime);
+    for t=1:windowsize:maxtime-windowsize
+        sizes=[];
+        amaxGFP=[];
+        for i=t:t+windowsize
+            sizes=[sizes;esequence{i}.finaldiams];
+         %   amaxGFP=[amaxGFP;esequence{i}.mdiskMax];
+        end
+        sizethresh=mean(sizes);
+        brightthresh=trackingparameters.PolarThreshold;%mean(amaxGFP)*1.075;
+        brightthreshhigh=trackingparameters.PolarThresholdHigh;
+    
+        if(t>trackingparameters.PolarThreshold2time)
+                brightthresh=trackingparameters.PolarThreshold2;%mean(amaxGFP)*1.075;
+                brightthreshhigh=trackingparameters.PolarThreshold2High;
+        end
+        [ esequence] = polarBodyFilter( esequence,t,t+windowsize,sizethresh,brightthresh,brightthreshhigh );
+    end
+    [ esequence] = polarBodyFilter( esequence,t,maxtime,sizethresh,brightthresh,brightthreshhigh );
+    
+end
+%gather candidates after deleting polar bodies this function is now deleted
+%safe
 esequence=gatherEndCandidates(esequence,trackingparameters);
 
 %do non gap

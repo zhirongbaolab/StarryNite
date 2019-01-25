@@ -7,7 +7,8 @@
 %base='l:/santella/NIH_data/Embryo_20101001/deconresults/annot/dats/nuclei/';
 counter=1;
 for i=start_time:end_time
-    e=esequence{i-start_time+1};
+   % e=esequence{i-start_time+1};
+   e=esequence{i}; %I'm not sure why the above (whcih doesnt work) was set if I changed this behavior at some point and did so inconsistently 4/29/2015 -as
     outputfile=[base,'t',num2str(i,'%03d'),'-nuclei'];
     fid=fopen(outputfile,'w');
     
@@ -35,8 +36,8 @@ for i=start_time:end_time
         end
     else
            if( ~isempty(e.finalpoints))  
-         e.finalpoints(:,1)=e.finalpoints(:,1)+ROIxmin-1;
-        e.finalpoints(:,2)=e.finalpoints(:,2)+ROIymin-1;
+         e.finalpoints(:,1)=e.finalpoints(:,1)-1;
+        e.finalpoints(:,2)=e.finalpoints(:,2)-1;
            end
     end
 outcounter=1;

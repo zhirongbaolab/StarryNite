@@ -4,6 +4,13 @@ function [matches,correct_matched]=compareDetectionWRadius_3_nonconflict(detecte
 %returns detected long array of indicies into correctpoints
 %a->b b->a less than *individual labeld radius
 
+if isempty(detectedpoints)|isempty(correctpoints)
+
+    matches=-1*ones(1,size(detectedpoints,1));
+    correct_matched=-1*ones(1,size(correctpoints,1));
+    return
+end
+
 %z values are in planes not pixels
 s_detectedpoints=[detectedpoints(:,1),detectedpoints(:,2),detectedpoints(:,3)*zscalingfactor];
 s_correctpoints=[correctpoints(:,1),correctpoints(:,2),correctpoints(:,3)*zscalingfactor];

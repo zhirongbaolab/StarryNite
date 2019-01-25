@@ -2,8 +2,12 @@ function [candidates,candidates_t]=findBackwardCandidatesTime_NN(esequence,i,t,t
       
 %findBackwardCandidates finds possible backward matches of start i at time t at
 %previous t-1 via x nn backward
+
 candidates=[];
 candidates_t=[];
+if(esequence{t}.delete(i))
+    return
+end
 temporalcutoff=trackingparameters.temporalcutoff;
 for offset=1:temporalcutoff
     if(t-offset>=1&&~isempty(esequence{t-offset}.finalpoints))
@@ -17,7 +21,7 @@ for offset=1:temporalcutoff
         end
         for j=1:min(number,length(distances))
             [v,im]=min(distances);
-            if(v<spatialcutoff&&esequence{t-offset}.suc(im,2)==-1) %if there is someplace to put it and  is within thresh      
+            if(~esequence{t-offset}.delete(im)&&v<spatialcutoff&&esequence{t-offset}.suc(im,2)==-1) %if there is someplace to put it and  is within thresh      
                 % if((j<2||v<spatialcutoff)&esequence{t-offset}.suc(im,2)==-1) %if there is someplace to put it and  is within thresh
                 ccandidates=[ccandidates;im];
             end
