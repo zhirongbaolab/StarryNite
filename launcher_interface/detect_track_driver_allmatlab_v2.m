@@ -2,9 +2,8 @@
 
 %input
 %parameterfile is full path location of parameter file
-% embryodir is full path of directory containing image files e.g.
-% L:/disk1/bao/083105/image/tif/
-% embryonumber is the prefix of the image file name e.g. 083105_L1
+%imageLocation is an example image name, the one selected by user in ROI
+
 %suffix is an optional string that will be appended to the name to all
 %output keeping one processing of a set of image data separate from another
 % for example to test multiple parameter sets, or (in conjunction with ROI parameters) 
@@ -18,7 +17,7 @@
 %are the position and size of nuclei.
 %output int outputdir is a zip file contaning lineaged results
 
-function detect_track_driver_allmatlab(parameterfile,embryodir,embryonumber,suffix,outputdirectory,polygon_points,isred);%,lineageParameterFileName)
+function detect_track_driver_allmatlab(parameterfile,imageLocation,suffix,outputdirectory,polygon_points,isred);%,lineageParameterFileName)
 runexpression=true;
 newimage=false;
 
@@ -68,12 +67,10 @@ processSequence;
 
 'detection completed, beginning lineaging'
 
- toc
 
 mkdir([outputdirectory,suffix,embryonumber,'/nuclei']);
 
 
- tic
 if (end_time-start_time>0)
     %parameterConfiguration;
     %parameterfile=lineageParameterFileName;
@@ -113,6 +110,8 @@ else
     output_unlineaged_acetree;
 end
 zipname=[outputdirectory,embryonumber,'_',suffix,'.zip'];
+zipnameforfile=['./',embryonumber,'_',suffix,'.zip'];
+
 zip(zipname,[outputdirectory,suffix,embryonumber,'/nuclei']);
 %remove temp directory
 rmdir([outputdirectory,suffix,embryonumber],'s');
@@ -127,12 +126,40 @@ file=fopen(xmlname,'w');
 fprintf (file, '<?xml version=''1.0'' encoding=\''utf-8\''?>\n');
 fprintf (file, '<embryo>\n');
 
-if (newimage)
-    fprintf (file,'<useStack type="1"/>\n');
-    fprintf (file,['<image file="',embryodir,embryonumber,'_t',num2str(start_time),'.tif"/>\n']);
+%if (newimage)
+    %fprintf (file,'<useStack type="1"/>\n');
+   
+    %fprintf (file,['<image file="',embryodir,embryonumber,'_t',num2str(start_time),'.tif"/>\n']);
+%else
+    %fprintf (file,['<image file="',embryodir,'image/tif/',embryonumber,'-t',num2str(start_time,'%03d'),'-p01.tif"/>\n']);
+%end
+%note no longer need to explicitly distinguish slices etc it is auto detected
+%but do need to specify if flipping or splitting in the interest of
+%legiblity, though these will be typically interpreted correctly based on
+%image name
+cleanimagelocation=imageLocation;
+cleanimagelocation(strfind(imageLocation,'\'))='/';
+
+
+fprintf (file,['<image file="',cleanimagelocation,'"/>\n']);
+if(~exist('flipstack')||~flipstack)
+    fprintf (file,['<Flip FlipMode="0"/>\n']);
 else
-    fprintf (file,['<image file="',embryodir,'image/tif/',embryonumber,'-t',num2str(start_time,'%03d'),'-p01.tif"/>\n']);
+    fprintf (file,['<Flip FlipMode="1"/>\n']);
 end
+if(~exist('splitstack')||~splitstack)
+    fprintf (file,['<Split SplitMode="0"/>\n']);
+else
+    fprintf (file,['<Split SplitMode="1"/>\n']);
+end
+
+
+%if (time_prefix is not standard (ie has been manually set in param file
+%propogate it to acetree
+if(exist('time_prefix','var')&&~strcmp(time_prefix,'_'))
+    fprintf (file,['<TimePrefix Prefix="',time_prefix,'"/>\n']);
+end
+
 fprintf (file,['<nuclei file="',zipname,'"/>\n']);
 
 fprintf (file,'<end index="475"/>\n');
@@ -143,11 +170,16 @@ fclose(file);
 
 %edited duplicate 
 zipnameedited=[outputdirectory,embryonumber,'_',suffix,'_edited.zip'];
+%ultimately this should be output but not doing it right now bc broken in 
+%current test acetree
+zipnameeditedforfile=['./',embryonumber,'_',suffix,'_edited.zip'];
+
 xmlname=[outputdirectory,embryonumber,'_',suffix,'_edited.xml'];
 file=fopen(xmlname,'w');
 
 fprintf (file, '<?xml version=''1.0'' encoding=\''utf-8\''?>\n');
 fprintf (file, '<embryo>\n');
+%{
 if (newimage)
     %if looking at new images delete old images after use
    % rmdir([embryodir,'image/'],'s');
@@ -156,6 +188,25 @@ if (newimage)
 else
     fprintf (file,['<image file="',embryodir,'image/tif/',embryonumber,'-t001-p01.tif"/>\n']);
 end
+%}
+
+%note no longer need to explicitly distinguish slices etc it is auto detected
+%but do need to specify if flipping or splitting in the interest of
+%legiblity, though these will be typically interpreted correctly based on
+%image name
+fprintf (file,['<image file="',cleanimagelocation,'"/>\n']);
+if(~exist('flipstack')||~flipstack)
+    fprintf (file,['<Flip FlipMode="0"/>\n']);
+else
+    fprintf (file,['<Flip FlipMode="1"/>\n']);
+end
+if(~exist('splitstack')||~splitstack)
+    fprintf (file,['<Split SplitMode="0"/>\n']);
+else
+    fprintf (file,['<Split SplitMode="1"/>\n']);
+end
+
+
 fprintf (file,['<nuclei file="',zipnameedited,'"/>\n']);
 
 fprintf (file,'<end index="475"/>\n');
@@ -179,7 +230,7 @@ if(~isred)
      system(['java -cp acebatch2.jar SixteenBitGreenExtractor1 ',xmlname,' 400']);  
   
 else
-     system([' ',xmlname,' 400']);    
+     system(['java -cp acebatch2.jar SixteenBitRedExtractor1 ',xmlname,' 400']);    
 end
 end
 

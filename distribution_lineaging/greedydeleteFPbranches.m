@@ -95,6 +95,14 @@ dFNf=0;
 dFNb=0;
 for t=trackingparameters.starttime:trackingparameters.endtime-1
     
+    %control logic for whether to force bifurcations to do soemthing used
+    %primarily for forcing an answer during early timepoints
+    if(isfield(trackingparameters,'useforce')&&trackingparameters.useforce&&t<trackingparameters.forceendtime)
+        forcestatus=true;
+    else
+        forcestatus=false;
+    end
+    
     for i=1:size(esequence{t}.finalpoints,1)
         %if this is a division
         if(esequence{t}.suc(i,2)~=-1&~esequence{t}.delete(i))
@@ -107,6 +115,9 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
                 splitscores_div,alldaughterdata,allforwarddata,allbackdata,count] ....
                 = assembleBifurcationData( esequence,t,i,trackingparameters,count );
            
+       %     if(t==79&i==17)
+       %     'blah'
+       %     end
               %pick whether to call the single, or multiple statistical model
             %classifier based on whether it is a single or multi model
             %passed in by parameter file
@@ -115,12 +126,12 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
             predicted_class = predictBifurcationType(...
                 alldaughterdata,allforwarddata,allbackdata,d1length,d2length,...
                 FNbackcand1lengths,FNbackcand2lengths,bestFNForwardLengthD1,...
-                bestFNForwardLengthD2,bestFNBackCorrect,trackingparameters,bestIndex, count);
+                bestFNForwardLengthD2,bestFNBackCorrect,trackingparameters,bestIndex, count,forcestatus);
             else
                  predicted_class = predictBifurcationTypeSinglemodel(...
                 alldaughterdata,allforwarddata,allbackdata,d1length,d2length,...
                 FNbackcand1lengths,FNbackcand2lengths,bestFNForwardLengthD1,...
-                bestFNForwardLengthD2,bestFNBackCorrect,trackingparameters,bestIndex, count);
+                bestFNForwardLengthD2,bestFNBackCorrect,trackingparameters,bestIndex, count,forcestatus);
             end
             minsize=min(d1length,d2length);
             classround=[classround;1];

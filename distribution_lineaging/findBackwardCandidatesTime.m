@@ -4,6 +4,9 @@ function [candidates,candidates_t]=findBackwardCandidatesTime(esequence,i,t,trac
 %previous ends
 candidates=[];
 candidates_t=[];
+if(esequence{t}.delete(i))
+    return
+end
 temporalcutoff=trackingparameters.temporalcutoff;
 %start of 2 implies no zero length FN  1 implies allowed
 %'allowing zero length fn'

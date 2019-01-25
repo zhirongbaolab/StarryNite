@@ -1,7 +1,7 @@
 function [ esequence ] = matchLineageWithoutDeleted( esequence,trackingparameters,embryonumbers_c,nucleidir,ROI,ROIxmin,ROIymin )
 %%iterate over computed lineage with corrected one in hand and compute
 %%matching and correct successors 
-filternames=true; %flag to filter non sulston names in edited lineage, necessary in data sets which have unremoved cells from neighboring embyros or undeleted FP
+filternames=false %flag to filter non sulston names in edited lineage, necessary in data sets which have unremoved cells from neighboring embyros or undeleted FP
 
 downsample=1;
 anisotropy=trackingparameters.anisotropyvector(3);

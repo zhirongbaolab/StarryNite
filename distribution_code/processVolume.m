@@ -13,7 +13,6 @@ if (nodatause||nodata)
         end
     else
         celldiameter=firsttimestepdiam*downsample;
-        'static diameter'
     end
 else
     nuclei=[nucleibase,'t',num2str(time-1,'%03d'),'-nuclei'];

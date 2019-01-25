@@ -9,14 +9,12 @@
 %answer key generation
 
 %setup of cases for tracking model 10 training embryos
-edittimes=[190,200,210,200,190,   180,190,180,190,180];
-    lineages={'ZD_BV82_APX-1_20110415_1_s2_emb1','ZD_BV82_CUL-1_20110329_1_s1_emb1',...
-    'ZD_RW10425_ELT-1V_20110916_1_s1_emb2','ZD_BV82_LIT-1_20110419_1_s1_emb2',...
-    'ZD_RW10434_LIT-1_20110419_1_s4_emb1',...
-    'ZD_BV82_WT_20110419_3_s2_emb2','ZD_BV82_WT_20110426_1_s1_emb3',...
-    'ZD_BV82_WT_20110426_1_s1_emb4', 'ZD_BV82_WT_20110426_1_s2_emb2',...
-    'ZD_RW10425_WT_20100412_2_s1_emb1'};
- basedir='L:\santella\unzipped_lineages\training\'
+
+edittimes=270;
+lineages={'ZD_JIM113_0.5_20130310_2_s1_emb1'}
+%{'ZD_RW10348_60_20130409_3_s2_emb_offset_corrected2'}
+
+basedir='L:\santella\unzipped_lineages\training_60slice\'
 
 
 %setup for 5 test embs 
@@ -49,17 +47,15 @@ nondivthress=[];
 %parameterconfiguration, and if intentional changes were made to
 %trackingparameters this should be remmed out, or parameters in
 %parameterconfiguration should be updated.
-parameterConfiguration
+%paramet erConfiguration
 
 %trainingmode refers to bif. classifier training not confidence
 %uses oracle
-trackingparameters.trainingmode=true;
-trackingparameters.useclassifieroracle=false;
-trackingparameters.recordanswers=true;%false;
+
 answerkey=true;
 outputtrimmed=false;
 errors=cell(1,length(lineages));
-replacemodel=false;%true;
+replacemodel=false;
 allexpectedchange={};
 evalforced=false;
 evalfinal=false;
@@ -72,6 +68,10 @@ for lin=1:length(lineages)
      %load([basedir,lineagedir{lin},'/',lineages{lin},'_fullmatlabresult.mat']);
     'loader for training files'
      load([basedir,lineages{lin},'_fullmatlabresult.mat']);
+    
+    trackingparameters.trainingmode=true;
+    trackingparameters.useclassifieroracle=false;
+        
     trackingparameters.anisotropyvector=[1,1,anisotropy];
     parameters.anisotropyvector=[1,1,anisotropy];
     
