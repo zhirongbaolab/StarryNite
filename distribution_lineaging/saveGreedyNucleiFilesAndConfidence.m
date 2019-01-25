@@ -10,10 +10,6 @@ allpoints=[];
 for i=1:length(esequence)
     allpoints=[allpoints;esequence{i}.finalpoints];
 end
-if isempty(allpoints)
-    'warning embryo with no detected nuclei'
-    return
-end
 allpoints(:,3)=allpoints(:,3).*anisotropy;
 allpointsm=mean(allpoints);
 %[coeff,score,roots] = princomp(allpoints-repmat(allpointsm,size(allpoints,1),1));
@@ -83,10 +79,10 @@ for t=1:time %we stop at time -1 because any initiation at endtime time is an is
                 %assembledData{t}(currentcounters(t))=data;
                 assembledData{t}=[assembledData{t};data];
                 if (isfield(esequence{t},'linkconfidences'))
-                     assembledConfidence{t}=[assembledConfidence{t};esequence{t}.linkconfidences(i,:)];
+                     assembledConfidence{t}=[assembledConfidence{t};esequence{t}.linkconfidences(i)];
                 else
                     % no confidence probably endpoint or might be 'death'
-                    assembledConfidence{t}=[assembledConfidence{t};[1,1,1]];    
+                    assembledConfidence{t}=[assembledConfidence{t};1];    
                 end
                 
                 currentname=['Nuc',num2str(nextnum)];
@@ -195,7 +191,7 @@ function [traversed,currentcounters,assembledData,assembledConfidence,assembledN
         data=[data,(currentpoint),esequence{t}.finaldiams(i),nextnum,esequence{t}.totalGFP(i)];%x,y,z,diam,nextnum(used in name)
 
         %every point in gap is the gap confidence repeated
-         assembledConfidence{tlocal}=[assembledConfidence{tlocal};esequence{t}.linkconfidences(i,:)];
+         assembledConfidence{tlocal}=[assembledConfidence{tlocal};esequence{t}.linkconfidences(i)];
         assembledData{tlocal}=[assembledData{tlocal};data];
         assembledNames{tlocal}={assembledNames{1,tlocal}{:},currentname};
         currentcounters(tlocal)=currentcounters(tlocal)+1;
@@ -228,10 +224,10 @@ function [traversed,currentcounters,assembledData,assembledConfidence,assembledN
         assembledNames{daughteri_t}={assembledNames{1,daughteri_t}{:},currentname};
         
         if (isfield(esequence{daughteri_t},'linkconfidences'))
-            assembledConfidence{daughteri_t}=[assembledConfidence{daughteri_t};esequence{daughteri_t}.linkconfidences(daughteri,:)];
+            assembledConfidence{daughteri_t}=[assembledConfidence{daughteri_t};esequence{daughteri_t}.linkconfidences(daughteri)];
         else
             % no confidence probably endpoint or might be 'death'
-            assembledConfidence{daughteri_t}=[assembledConfidence{daughteri_t};[1,1,1]];
+            assembledConfidence{daughteri_t}=[assembledConfidence{daughteri_t};1];
         end
         
         if(esequence{daughteri_t}.suc(daughteri,2)~=-1)%if division need to revisit naming

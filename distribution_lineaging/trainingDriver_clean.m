@@ -8,7 +8,6 @@
 %red 10 training set, when these are used filtering needs to be on in
 %answer key generation
 
-%setup of cases for tracking model 10 training embryos
 edittimes=[190,200,210,200,190,   180,190,180,190,180];
     lineages={'ZD_BV82_APX-1_20110415_1_s2_emb1','ZD_BV82_CUL-1_20110329_1_s1_emb1',...
     'ZD_RW10425_ELT-1V_20110916_1_s1_emb2','ZD_BV82_LIT-1_20110419_1_s1_emb2',...
@@ -19,24 +18,6 @@ edittimes=[190,200,210,200,190,   180,190,180,190,180];
  basedir='L:\santella\unzipped_lineages\training\'
 
 
-%setup for 5 test embs 
-%grafted here from training driver to compute confusion matrix on test data
-%for bmc bioinformatics revision
-%when these are used for training filtering should be off
-%{
-lineages={'ZD_BV82_WT_20100809_2_s1_emb_linbiftest_lowthresh1','ZD_RW10425_WT_20100412_2_s1_emb1',...
-    'ZD_RW10425_WT_20100412_2_s1_emb2','ZD_RW10425_WT_20100412_2_s1_emb3','ZD_RW10434_WT_20110429_2_s1_emb_linbiftest1'};
-
-lineagedir={'ZD_BV82_WT_20100809_2','ZD_RW10425_WT_20100412_2',...
-    'ZD_RW10425_WT_20100412_2','ZD_RW10425_WT_20100412_2','ZD_RW10434_WT_20110429_2'};
-lineageimage={'ZD_BV82_WT_20100809_2_s1','ZD_RW10425_WT_20100412_2_s1',...
-    'ZD_RW10425_WT_20100412_2_s1','ZD_RW10425_WT_20100412_2_s1','ZD_RW10434_WT_20110429_2_s1'};
-edittimes=[200,192,201,185,185]
-eightcelltimes=[20,20,30,20,20];
-basedir='L:\santella\unzipped_lineages\test_data\'
-%}
-
- 
 nondivthress=[];
 
 %'green mode'
@@ -54,12 +35,11 @@ parameterConfiguration
 %trainingmode refers to bif. classifier training not confidence
 %uses oracle
 trackingparameters.trainingmode=true;
-trackingparameters.useclassifieroracle=false;
-trackingparameters.recordanswers=true;%false;
+trackingparameters.recordanswers=false;
 answerkey=true;
 outputtrimmed=false;
 errors=cell(1,length(lineages));
-replacemodel=false;%true;
+replacemodel=true;
 allexpectedchange={};
 evalforced=false;
 evalfinal=false;

@@ -1,6 +1,0 @@
-Production Information,,,,,,,,,,,,,,,,
-Cells,Image Series,Marker,Strain,Compressed Embryo?,Temporal Resolution,Segmentation,cytoshow link,Movie start timeProperty (min),isSulstonMode?,Total Time Points,X_SCALE,Y_SCALE,Z_SCALE,Key_Frames_Rotate,Key_Values_Rotate,Initial_Rotation
-all-nuclear positions,DISPIM_061416,-,JIM113,N,60 seconds,Starrynite,http://fsbill.cam.uchc.edu/cgi-bin/gloworm.pl?MOVIE=WormGUIDESdiSPIMemb2_scene.scn,20,TRUE,360,1,1,1,1 16 321 359,90 30 30 90,0 0 0
-AVG;RIH;RIPL;RIPR,20141022_JIM113_UNC-86myrGFP_1_S1,UNC-86,BV190,Y,75 seconds,Imaris Manual,'-,0,0,0,0,0,0,-,-,-
-AVL,BV42712132016_s1,LIM-6prom,BV427,Y,90 seconds,Imaris Manual,'-,0,0,0,0,0,0,-,-,-
-SIBDR; SIBDL;SAAV,20151016_pks,LIM-4,BV286,y,75 seconds,Imaris Manual,'-,0,0,0,0,0,0,-,-,-

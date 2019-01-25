@@ -38,11 +38,6 @@ for time=starttime:endtime
          nucleibase=testlineagedir;%[nucleidir,embryonumber,'\'];
        % nucleibase='G:\My Documents\canned_starrynite-1.3.3\src\nuclei\';
         nuclei=[nucleibase,'t',num2str(time,'%03d'),'-nuclei'];
-        
-        if~exist(nuclei,'file')
-            'warning expected nuclei files missing'
-            break
-        end
        % [celldata,cellnames]=readnuclei_no_invalid(nuclei);
         [celldata_test1,cellnames]=readnuclei(nuclei);
 
@@ -58,12 +53,6 @@ for time=starttime:endtime
        % nucleibase=[nucleidir,embryonumber,'\DOG_edited\nuclei\'];
          nucleibase=referencelineagedir;%[nucleidir,embryonumber_c,'\'];
         nuclei=[nucleibase,'t',num2str(time,'%03d'),'-nuclei']; 
-        
-        if~exist(nuclei,'file')
-            'warning expected nuclei files missing'
-            break
-        end
-        
         [celldata_c1,cellnames]=readnuclei(nuclei);
       
         %filter reference lineage to remove non sulston named nuclei  which
@@ -118,13 +107,8 @@ for time=starttime:endtime
 
             %nucleibase=[nucleidir,embryonumber,'\DOG_unedited\nuclei\'];
                  %    nucleibase=[nucleidir,embryonumber,'\'];
-                 nucleibase=testlineagedir;
-                 nuclei=[nucleibase,'t',num2str(time+1,'%03d'),'-nuclei'];
-                 
-                 if~exist(nuclei,'file')
-                     'warning expected nuclei files missing'
-                     break
-                 end
+                      nucleibase=testlineagedir;
+             nuclei=[nucleibase,'t',num2str(time+1,'%03d'),'-nuclei'];
             [celldata_test2,cellnames]=readnuclei(nuclei);
 
             indiciesp2test=celldata_test2(:,2);
@@ -340,7 +324,7 @@ FPtrackdensities=[];
 
 %nt can lookup density on
 %other end
-for i=1:size(incorrect_sucessors,1)
+for i=1:endtime-1
 
 FNtrackdensities=[FNtrackdensities;(incorrect_sucessors(i,1:4))];
 FPtrackdensities=[FPtrackdensities;(incorrect_sucessors(i,5:8))];

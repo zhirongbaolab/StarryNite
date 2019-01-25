@@ -30,13 +30,6 @@ dis=distance_anisotropic(esequence{t}.finalpoints',esequence{t+1}.finalpoints(ot
 solved=false;
 cind=1;
 %for nnind=1:4
-
-    if(isfield(trackingparameters,'useforce')&&trackingparameters.useforce&&t<trackingparameters.forceendtime)
-        forcestatus=true;
-    else
-        forcestatus=false;
-    end
-    
 while (~solved)
 
     [d,mind]=min(dis);
@@ -62,7 +55,7 @@ while (~solved)
                 bestFNForwardLengthD1,bestFNForwardLengthD2,....
                 bestmatchingsplayerstart,bestmatchingplayerend,bestdaughter,bestIndex,...
                 splitscores_div,alldaughterdata,allforwarddata,allbackdata,count] ....
-                = assembleBifurcationData( esequence,t,mind,trackingparameters,count);
+                = assembleBifurcationData( esequence,t,mind,trackingparameters,count );
 
             %pick whether to call the single, or multiple statistical model
             %classifier based on whether it is a single or multi model
@@ -71,12 +64,12 @@ while (~solved)
             predicted_class = predictBifurcationType(...
                 alldaughterdata,allforwarddata,allbackdata,d1length,d2length,...
                 FNbackcand1lengths,FNbackcand2lengths,bestFNForwardLengthD1,...
-                bestFNForwardLengthD2,bestFNBackCorrect,trackingparameters,bestIndex, count,forcestatus); 
+                bestFNForwardLengthD2,bestFNBackCorrect,trackingparameters,bestIndex, count); 
            else
                    predicted_class = predictBifurcationTypeSinglemodel(...
                 alldaughterdata,allforwarddata,allbackdata,d1length,d2length,...
                 FNbackcand1lengths,FNbackcand2lengths,bestFNForwardLengthD1,...
-                bestFNForwardLengthD2,bestFNBackCorrect,trackingparameters,bestIndex, count,forcestatus); 
+                bestFNForwardLengthD2,bestFNBackCorrect,trackingparameters,bestIndex, count); 
            end
                minsize=min(d1length,d2length);
             classround=[classround;2];

@@ -68,10 +68,12 @@ processSequence;
 
 'detection completed, beginning lineaging'
 
+ toc
 
 mkdir([outputdirectory,suffix,embryonumber,'/nuclei']);
 
 
+ tic
 if (end_time-start_time>0)
     %parameterConfiguration;
     %parameterfile=lineageParameterFileName;
@@ -177,7 +179,7 @@ if(~isred)
      system(['java -cp acebatch2.jar SixteenBitGreenExtractor1 ',xmlname,' 400']);  
   
 else
-     system(['java -cp acebatch2.jar SixteenBitRedExtractor1 ',xmlname,' 400']);    
+     system([' ',xmlname,' 400']);    
 end
 end
 

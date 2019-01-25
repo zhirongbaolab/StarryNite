@@ -79,7 +79,7 @@ mergegroups=conFromPairMerge(pairmerges);
 [averagedpoints,points,mergedaspectratios,mergeddiams,mergemaximas,merged_sliceindicies,mergedlogoddssum]=mergeAndJudgeNuclei(diskSet,nucleiSet,mergegroups,anisotropy);
 
 if (savedata)
-  
+    e.mergedlogoddssum=mergedlogoddssum;
 e.pairmerges=pairmerges;
 e.mergear=mergear;
 e.allnewrange=newrange2a;
@@ -87,7 +87,6 @@ e.mergeinfo=mergeinfo2a;
 e.mergegroups=mergegroups;
 e.allaspectratio=currentar;
 end
-e.mergedlogoddssum=mergedlogoddssum;
 mergedNucleiSet=struct;
 mergedNucleiSet.averagedpositions=averagedpoints;
 mergedNucleiSet.positions=points;

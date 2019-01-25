@@ -55,13 +55,8 @@ if(i~=-1)
 for t=start_t+1:end_t-1
     %not clean if: fn or if there is a division and this is not the
     %bifurcation we're currently examining
-    
-      %not sure why had to add these 5/15/2014
-    if (i==-1)
-        break
-    end
-    if((esequence{t}.suc_time(i,1)~=t+1||...
-            (~(t==end_t-1&i==esequence{end_t}.pred(end_i))&esequence{t}.suc(i,2)~=-1) ))
+    if(esequence{t}.suc_time(i,1)~=t+1||...
+            (~(t==end_t-1&i==esequence{end_t}.pred(end_i))&esequence{t}.suc(i,2)~=-1) )
         i=-1;
         break
     else
@@ -84,10 +79,6 @@ end
 %interveene
 if(i~=-1)
 for t=end_t-1:-1:start_t+1
-    %not sure why had to add these 5/15/2014
-    if(i==-1)
-        break
-    end
     %same check but since we know the only time w'ere in the tp of bif we
     %are in bif can use simpler rule
     if(esequence{t}.pred_time(i,1)~=t-1||(t~=end_t-1&esequence{t}.suc(i,2)~=-1))

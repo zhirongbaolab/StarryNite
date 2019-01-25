@@ -1,8 +1,7 @@
 function diskSet=calculateSliceGFP(Xorig,diskSet)
-global parameters;
 diskSet.GFPsums=zeros(1,length(diskSet.xydetdiameters));
 diskSet.diskArea=zeros(1,length(diskSet.xydetdiameters));
-diskSet.diskMax=zeros(1,length(diskSet.xydetdiameters));
+
 raysort2s=[1,13,5,9,3,12,7,15,2,14,6,10,4,11,8,16];
 for i=1:length(diskSet.xydetdiameters)
     
@@ -23,18 +22,6 @@ for i=1:length(diskSet.xydetdiameters)
     diskSet.diskArea(i)=length(points);
     slice=Xorig(:,:,diskSet.xymax(i,3));
     diskSet.GFPsums(i)=sum(slice(points));
-    %compute median value of non b
-    if(~isfield(parameters,'polarBackgroundTrheshold'))
-       % points=find(pointsmask&slice>2200);
-       points=find(pointsmask);
-    else
-        points=find(pointsmask&slice>parameters.polarBackgroundThreshold);
-    end
-    if(isempty(points))
-        diskSet.diskMax(i)=nan;
-    else
-    diskSet.diskMax(i)=prctile(slice(points),95);
-    end
-    %median(slice(points));%
+  
 end
 diskSet;

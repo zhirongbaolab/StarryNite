@@ -41,31 +41,15 @@ for example=1:length(tlist)
         time_prefix='_';
     end
     
-    %parse example file partially for matlab lsm and split cases
-    %delegate this to matlab port of java name code for other cases so this is not going to be
-    %used in simple tiff case except as an error correction last ditch if
-    %the java name parsign doesn't generate an existing file name
-    endprefixlocation=max(strfind(imageLocation,time_prefix));
-    seplocation=max(strfind(imageLocation,filesep));
-    embryodir=imageLocation(1:seplocation);
-    embryonumber=imageLocation(seplocation+1:endprefixlocation-1);
     
-    %note matlab stack is no longer supported by new gui but keeping this
-    %here which will keep this code back compatible with old gui should it
-    %be needed
-    if (MATLAB_STACK)   
+    if (MATLAB_STACK)
         load([embryodir,embryonumber,time_prefix,num2str(time,'%04d'),'.mat']);
         X=stack;%(:,:,1:slices);
         clear('stack');
         %X=X(:,:,1:slices);
         pause(1);%make easily ctrl-c able?
     else
-        %old gui used newscope flag which was always a weird historical
-        %choice, splitstack is used by new UI 
-        %structured this way because newscope contaminates some old base
-        %parameter files so it should only be paid attention to abscent a
-        %more up to date directive. 
-        if((~exist('splitstack','var')&&newscope)||splitstack)
+        if(newscope)
             if rednuclei
                 X=im2double(((loadCellStackMetamorph([embryodir,embryonumber],time,1,slices,[0,0,0,0],zeropadding))));
                 %end
@@ -78,66 +62,20 @@ for example=1:length(tlist)
             end
 
         else
-            %LSM no longer supported by new gui but left here for back
-            %compatibility with new gui
             if(LSM_time)
                 X=im2single(loadCellStackLSMtime([embryodir,embryonumber],time,LSM_channel,slices));
             else
-                %now slice and implicit simpletiff are handled here
-                %the current acetree.jar image handling code was ported
-                %rather than called because it targets a newer java version
-                %than is default in Matlab. 
-                slicepattern='-p\d*.tif';
-                isslice=~isempty(regexp(imageLocation,slicepattern));
-                
-                if(isslice)
-                    %recompute prefix if slice bc sep is always -t 
-                    endprefixlocation=max(strfind(imageLocation,'-t'));
-                     embryonumber=imageLocation(seplocation+1:endprefixlocation-1);
-   
-                    %slice image
-                    delim1='-';delim2='-';
-                    X=loadCellStack([embryodir,embryonumber],slices,time,delim1,delim2);
-                else
-                    %simple tiff of isim dispim etc
-                    %this call peels off the time
-                    imagenameprefix=getImagePrefix(imageLocation);
-    
-                     if (zeropadding)
-                        %name=[basename,'_t',num2str(time,'%03d'),'.TIF'];
-                         imagefilename=[imagenameprefix,num2str(time,'%03d'),'.tif'];
-                  
-                    else
-                        imagefilename=[imagenameprefix,num2str(time),'.tif'];
-                  
-                    end
-                    
-                    if(~exist(imagefilename,'file'))
-                        %fallthrough backup if for some reason new acetree
-                        %handling code wont try  the old suffix based tiff
-                        %assumption as insurance against uncovered cases
-                        imagefilename=[embryodir,embryonumber,time_prefix,num2str(time),'.tif'];
-                    end
-                      X=im2double(loadSimpleStackTiff(imagefilename));
-                    if(slices<size(X,3))
-                        X=X(:,:,1:slices);
-                    end
-                end
-                %{
                 if (SIMPLETIFF)
                     imagefilename=[embryodir,embryonumber,time_prefix,num2str(time),'.tif'];
                     X=im2double(loadSimpleStackTiff(imagefilename));
                     if(slices<size(X,3))
                         X=X(:,:,1:slices);
                     end
-                else 
-                    %slice case
+                else
                     delim1='_';delim2='-';
                     X=loadCellStack([embryodir,embryonumber],slices,time,delim1,delim2);
                     %X=im2single((loadCellStack([embryodir,embryonumber],slices,time)));
                 end
-                
-                %}
             end
         end
     end
@@ -153,7 +91,6 @@ for example=1:length(tlist)
                 end
             end
     
-            
     if(rednuclei)
         expind=2;
     else
@@ -162,28 +99,55 @@ for example=1:length(tlist)
     
     %output slices before subsampling via ROI
     if(outputSlice)
-        
-        minval=approximateMatrixPercentile(X,outputSlice_linptilem,round((2^16)/10));
-        maxval=approximateMatrixPercentile(X,outputSlice_linptile,round((2^16)/10));
-        
-        %red mapping is calculated on the first volume and uniform
-        %afterward to allow quantitation of as opposed to nuclear channel
-        %mapped per volume to maximize visibility in the 8bit images
-        if(exist('Xr')&&tlist(example)==firsttimestep)
-            Xrfinal=im2double(((loadCellStackMetamorph([embryodir,embryonumber],tlist(length(tlist)),expind,slices,[0,0,0,0],zeropadding))));
+        %{
+        if(slices>60||size(X,1)>600)%if big stack dont try to take percentile will run out of memory
+            maximage=max(X,[],3);
+            minval=prctile(reshape(maximage,[1,numel(maximage)]),outputSlice_linptilem);
+            maxval=prctile(reshape(maximage,[1,numel(maximage)]),outputSlice_linptile);
+            if(exist('Xr')&&tlist(example)==firsttimestep)
+                
+                Xrfinal=im2double(((loadCellStackMetamorph([embryodir,embryonumber],tlist(length(tlist)),expind,slices,[0,0,0,0],zeropadding))));
+                maximage=max(Xrfinal,[],3);
+                clear Xrfinal;
+                minvalr=prctile(reshape(maximage,[1,numel(maximage)]),outputSlice_expptilem);
+                maxvalr=prctile(reshape(maximage,[1,numel(maximage)]),outputSlice_expptile);
+            end
+        else
+%}
+    %        minval=prctile(reshape(X,[1,numel(X)]),outputSlice_linptilem);
+    %        maxval=prctile(reshape(X,[1,numel(X)]),outputSlice_linptile);
             
-            %minvalr=prctile(reshape(Xrfinal,[1,numel(Xrfinal)]),outputSlice_expptilem);
-            %maxvalr=prctile(reshape(Xrfinal,[1,numel(Xrfinal)]),outputSlice_expptile);
-            minvalr=approximateMatrixPercentile(Xrfinal,outputSlice_expptilem,round((2^16)/10));
-            maxvalr=approximateMatrixPercentile(Xrfinal,outputSlice_expptile,round((2^16)/10));
-            
-            
-            clear Xrfinal;
-        end
-           outputAceTreeSlice(X,embryodir, embryonumber,time,minval,maxval,1,false);
-      
+            minval=approximateMatrixPercentile(X,outputSlice_linptilem,round((2^16)/10));
+            maxval=approximateMatrixPercentile(X,outputSlice_linptile,round((2^16)/10));
+   
+            %red mapping is calculated on the first volume and uniform
+            %afterward to allow quantitation of as opposed to nuclear channel
+            %mapped per volume to maximize visibility in the 8bit images
+            if(exist('Xr')&&tlist(example)==firsttimestep)
+                Xrfinal=im2double(((loadCellStackMetamorph([embryodir,embryonumber],tlist(length(tlist)),expind,slices,[0,0,0,0],zeropadding))));
+                
+                %minvalr=prctile(reshape(Xrfinal,[1,numel(Xrfinal)]),outputSlice_expptilem);
+                %maxvalr=prctile(reshape(Xrfinal,[1,numel(Xrfinal)]),outputSlice_expptile);
+                minvalr=approximateMatrixPercentile(Xrfinal,outputSlice_expptilem,round((2^16)/10));
+                maxvalr=approximateMatrixPercentile(Xrfinal,outputSlice_expptile,round((2^16)/10));
+               
+                
+                clear Xrfinal;
+            end
+  %      end
+        %
+        %if(rednuclei)
+        %     outputAceTreeSlice(Xr,embryodir, embryonumber,time,minvalr,maxvalr,1,false);
+        % else
+        outputAceTreeSlice(X,embryodir, embryonumber,time,minval,maxval,1,false);
+        %end
         if (exist('Xr'))
-            outputAceTreeSlice(Xr,embryodir, embryonumber,time,minvalr,maxvalr,1,true);         
+            %if(rednuclei)
+            %    outputAceTreeSlice(X,embryodir, embryonumber,time,minval,maxval,1,true);
+            %else
+            outputAceTreeSlice(Xr,embryodir, embryonumber,time,minvalr,maxvalr,1,true);
+            %end
+            
         end
     end
     
@@ -415,6 +379,8 @@ if (SNoutput)
          outputSNFiles(embryodir,name,esequence,min(tlist),max(tlist),downsample,1,1);
 
     end
-
+        %else
+    %    outputSNFiles([embryodir,'\',embryonumber],embryonumber,esequence,min(tlist),max(tlist),downsample);
+    %end
 end
 

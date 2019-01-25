@@ -43,15 +43,15 @@ for t=1:trackingparameters.endtime-1
                   confidencedata.div_ti=[confidencedata.div_ti;t,i];
             else
                 if(esequence{t}.suc_time(i,1)~=t+1)
-                    %measure gape nondiv
+                    %measure simple nondiv
                     gapdata=     computeGapConfidenceVector(esequence, t, i,trackingparameters);
                     [match1,matchi,matchj ] = checkIfRealSuccessors( t,i,esequence{t}.suc_time(i,1),esequence{t}.suc(i,1),esequence );
                     gap=[gap;gapdata,stageinfo];
                     gaptrue=[gaptrue;match1&esequence{t}.correct_suc(i,2)==-1];
                      confidencedata.gap_ti=[confidencedata.gap_ti;t,i];
                 else
-                    %measure simple nondiv
-                    nondivdata= computeNonDivisionConfidenceVector(esequence, t,i,1,trackingparameters);
+                    %measure gap nondiv
+                    nondivdata= computeNonDivisionConfidenceVector(esequence, t, i,trackingparameters);
                     [match1,matchi,matchj ] = checkIfRealSuccessors( t,i,esequence{t}.suc_time(i,1),esequence{t}.suc(i,1),esequence );
                     nondiv=[nondiv;nondivdata,stageinfo];
                     nondivtrue=[nondivtrue;match1&esequence{t}.correct_suc(i,2)==-1];

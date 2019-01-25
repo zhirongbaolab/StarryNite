@@ -1,14 +1,14 @@
-function  [ data]= computeNonDivisionConfidenceVector(esequence, t, i,d,trackingparameters)
+function  [ data]= computeNonDivisionConfidenceVector(esequence, t, i,trackingparameters)
 %computes feature vector for the confidence of a bifurcation
 %assumes the passed in nucleus is about to bifurcate
-data=calculateCellPairVectorNondivision_wdiam(esequence{t},i,esequence{esequence{t}.suc_time(i,d)},esequence{t}.suc(i,d),trackingparameters.anisotropyvector);
+data=calculateCellPairVectorNondivision_wdiam(esequence{t},i,esequence{esequence{t}.suc_time(i,1)},esequence{t}.suc(i,1),trackingparameters.anisotropyvector);
 
 %wide window measures
-data=[data,calculateWideWindowCellPairVectorNondivision(esequence,t,i,esequence{t}.suc_time(i,d),esequence{t}.suc(i,d),trackingparameters.anisotropyvector,trackingparameters.wideWindow)];
+data=[data,calculateWideWindowCellPairVectorNondivision(esequence,t,i,esequence{t}.suc_time(i,1),esequence{t}.suc(i,1),trackingparameters.anisotropyvector,trackingparameters.wideWindow)];
 
 %alternatives check
-suc=esequence{t}.suc(i,d);
-suc_t=esequence{t}.suc_time(i,d);
+suc=esequence{t}.suc(i,1);
+suc_t=esequence{t}.suc_time(i,1);
 
 
 %I took filter out because it made results worse, though should probably
