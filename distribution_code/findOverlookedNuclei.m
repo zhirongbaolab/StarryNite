@@ -1,5 +1,6 @@
 function nucleiSet=findOverlookedNuclei(X,nucleiSet,diskSet,anisotropy,celldiameter,numcells)
 
+%{
 nucleiSet.centers=cell(length(nucleiSet.centerindicies),1);
 nucleiSet.logodds=cell(length(nucleiSet.centerindicies),1);
 nucleiSet.range=cell(length(nucleiSet.centerindicies),1);
@@ -8,6 +9,27 @@ for i=1:length(nucleiSet.centerindicies)
     nucleiSet.logodds{i}=calculateLogodds(nucleiSet.centers{i},diskSet.centeredxymax(nucleiSet.centerindicies(i),:),diskSet.xymaximavals(nucleiSet.centerindicies(i),:),diskSet.xydetdiameters(nucleiSet.centerindicies(i)),diskSet.xymaximavals,diskSet.xydetdiameters,anisotropy,diskSet.xycoverage);
     nucleiSet.range{i}=vcalculateMaximalRange(nucleiSet.centers{i},diskSet.centeredxymax(nucleiSet.centerindicies(i),:),nucleiSet.logodds{i},diskSet.xycoverage,length(nucleiSet.centers));
 end
+%}
+
+%this should be classifiable for parallel for no actually it isnt
+
+centers=cell(length(nucleiSet.centerindicies),1);
+logodds=cell(length(nucleiSet.centerindicies),1);
+range=cell(length(nucleiSet.centerindicies),1);
+parfor i=1:length(nucleiSet.centerindicies)
+    centers{i}=assign_planes(diskSet.centeredxymax(nucleiSet.centerindicies(i),:),diskSet.xydetdiameters(nucleiSet.centerindicies(i)),X,diskSet.centeredxymax,diskSet.xydetdiameters,anisotropy);
+end
+parfor i=1:length(nucleiSet.centerindicies)
+    logodds{i}=calculateLogodds(centers{i},diskSet.centeredxymax(nucleiSet.centerindicies(i),:),diskSet.xymaximavals(nucleiSet.centerindicies(i),:),diskSet.xydetdiameters(nucleiSet.centerindicies(i)),diskSet.xymaximavals,diskSet.xydetdiameters,anisotropy,diskSet.xycoverage);
+end
+%parfor doesnt like parameter lookup function
+for i=1:length(nucleiSet.centerindicies)
+    range{i}=vcalculateMaximalRange(centers{i},diskSet.centeredxymax(nucleiSet.centerindicies(i),:),logodds{i},diskSet.xycoverage,length(centers));
+end
+nucleiSet.centers=centers;
+nucleiSet.logodds=logodds;
+nucleiSet.range=range;
+%}
 
  %[centers2,logodds2,range2,unclaimedcentered,unclaimeddiams_out,unclaimedmaximavals_out]=iterate2ndround(X,oldindicies,centers2,logodds2,range2,unclaimed, unclaimedmaximavals,unclaimedcentered,unclaimeddiams,unclaimedcoverage,xymax,centeredxymax,xymaximavals,xydetdiameters,xycoverage,anisotropy,celldiameter,previous,numcells)
 %indicies are unclaimed in previous 

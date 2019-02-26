@@ -22,6 +22,8 @@ runexpression=true;
 newimage=false;
 
 'beginning lineaging'
+profile clear
+profile on
 tic
 global parameters;
 
@@ -114,6 +116,7 @@ zipnameforfile=['./',embryonumber,'_',suffix,'.zip'];
 
 zip(zipname,[outputdirectory,suffix,embryonumber,'/nuclei']);
 %remove temp directory
+profile viewer; 
 rmdir([outputdirectory,suffix,embryonumber],'s');
 
 toc
@@ -162,7 +165,7 @@ end
 
 fprintf (file,['<nuclei file="',zipname,'"/>\n']);
 
-fprintf (file,'<end index="475"/>\n');
+fprintf (file,strcat('<end index="',end_time,'"/>\n'));
 fprintf(file,['<resolution xyRes="',num2str(xyres),'" zRes="',num2str(zres),'" planeEnd="',num2str(slices),'"/> <exprCorr type="blot"/>\n']); 
 fprintf (file,'<polar size="15"/>\n');
 fprintf (file,'</embryo>');

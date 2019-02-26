@@ -18,7 +18,11 @@ diskmax=zeros(length(dataset.merged_sliceindicies),1);
             for s=1:length(slices)
                  area(n)=area(n)+dataset.diskArea(slices(s));
                 integratedGFP(n)=integratedGFP(n)+dataset.diskGFPsums(slices(s));
-               diskmax(n)=max(diskmax(n),dataset.diskMax(slices(s)));
+                    %safety wrapper for old saved mat files where this
+                    %value was not computed
+                if exist('dataset.diskMax','var')
+                    diskmax(n)=max(diskmax(n),dataset.diskMax(slices(s)));
+                end
             end  
 
 end

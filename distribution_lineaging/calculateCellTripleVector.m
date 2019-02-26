@@ -1,37 +1,7 @@
 function [ datavector ] =calculateCellTripleVector(nucs,i,nucs2,j,nucs3,k,anisotropy,interval)
-%{
+
 %score measurements related to agreement between daughters
 
-midpoint=(nucs3.finalpoints(k,:)+nucs2.finalpoints(j,:))./2;
-drift=distance_anisotropic(nucs.finalpoints(i,:)',midpoint',anisotropy);
-daughterdist=distance_anisotropic(nucs3.finalpoints(k,:)',nucs2.finalpoints(j,:)',anisotropy);
-if(daughterdist==0)
-'weird';
-end
-%ensure that j is smaller of distances
-%distj=distance_anisotropic(nucs.finalpoints(i,:)',nucs2.finalpoints(j,:)',anisotropy);
-%distk=distance_anisotropic(nucs.finalpoints(i,:)',nucs3.finalpoints(k,:)',anisotropy);
-
-%if(distj>distk)
-%temp=k;
-%tempnucs=nucs3;
-%k=j;
-%nucs3=nucs2;
-%j=temp;
-%nucs2=tempnucs;
-%end
- % min(distj/distk,distk/distj),...
-    
-  %     distj/distk,...
- datavector=[log(drift./daughterdist+1),...
-    nucs2.totalGFP(j)/nucs3.totalGFP(k),...
-      nucs2.avgGFP(j)/nucs3.avgGFP(k),...
-    nucs2.finaldiams(j)/nucs3.finaldiams(k)];
-
-end
-%}
-%calculate new motion cues
-%
 
 
 midpoint=(nucs3.finalpoints(k,:)+nucs2.finalpoints(j,:))./2;
@@ -81,8 +51,8 @@ end
 if(length(slices)==1)
     positions=[positions;positions+repmat([0,0,anisotropy(3)],size(positions,1),1)];
 end
-[coeff,score,roots] = princomp(positions);
-[coeff2,score2,roots2] = princomp(positions(:,1:2));
+%[coeff,score,roots] = pca(positions);
+[~,~,roots2] = pca(positions(:,1:2));
 
 %add aspect ratio of parent to vector (3d, 2d) 
 %datavector=[datavector,roots(2)/roots(3),roots2(1)/roots2(2)];
@@ -106,8 +76,8 @@ if(length(slices)==1)
     positions=[positions;positions+repmat([0,0,anisotropy(3)],size(positions,1),1)];
 end
 
-[coeffd1,scored1,rootsd1] = princomp(positions);
-[coeff2d1,score2d1,roots2d1] = princomp(positions(:,1:2));
+%[coeffd1,scored1,rootsd1] = pca(positions);
+[~,~,roots2d1] = pca(positions(:,1:2));
 
 slices=nucs3.merged_sliceindicies{k};
 positions=[];
@@ -127,11 +97,11 @@ if(length(slices)==1)
     positions=[positions;positions+repmat([0,0,anisotropy(3)],size(positions,1),1)];
 end
 
-[coeffd2,scored2,rootsd2] = princomp(positions);
-[coeff2d2,score2d2,roots2d2] = princomp(positions(:,1:2));
+%[coeffd2,scored2,rootsd2] = pca(positions);
+[~,~,roots2d2] = pca(positions(:,1:2));
 
 
-
+%these are not used
 % d1, d2 change in 3d d1,d2 change in 2d
 %datavector=[datavector,rootsd1(2)/roots(2),rootsd2(2)/roots(2),roots2d1(1)/roots2(1),roots2d2(1)/roots2(1)];
 

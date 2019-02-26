@@ -3,8 +3,12 @@ function [error ,correctflags,computedclasses,model] = ...
     allforwarddata,trulyambigious,FullyDivLooking,...
     FNDivLooking,FullyFPLooking,DirtyFPLooking,DivFPLooking)
 %train a classifier model based on data and labels and return the model and its errors
+%normal mode uses gaussian model setting flag to kernel sets up kernel
+%density based pdf which tends to be more accurate slighty for more similar
+%data sets but generalizes less (across imaging modalities etc)
 
-distributiontypemain='kernel';
+%distributiontypemain='kernel';
+distributiontypemain='normal';
 correct=0;
 correctflags=ones(size(classtags));
 computedclasses=zeros(size(classtags));
@@ -38,6 +42,8 @@ topclass=topclass+DivFPLooking*5;
 %}
 data=[topclass,alldaughterdata,allbackdata,allforwarddata];
 
+%data=[alldaughterdata,allbackdata,allforwarddata];
+
 % if a set of measures is totally missing for a class (or only 1)
 %fill this in with a few random numbers to allow fitting
 %these should not effect real classification since the top class field will
@@ -55,14 +61,26 @@ for i=1:length(classes)
 end
 %distinguish categorical variable of topological class type from others 
 distributiontype={'mvmn'};
+
 for i=1:size(data,2)-1
     distributiontype{i+1}=distributiontypemain;
 end
+%NB for 2019 retraining I stopped program here and saved mat file of
+%training data trained and saved model manually and then updated code to
+%use modern classifier class
 
-testclass=NaiveBayes.fit(data,classtags,'distribution',distributiontype);
 data=[topclass,alldaughterdata,allbackdata,allforwarddata];
 
+%old classifier training
+%{
+testclass=NaiveBayes.fit(data,classtags,'distribution',distributiontype);
 testpred=predict(testclass,data,'HandleMissing','on');
+%}
+
+%new training
+testclass=fitcnb(data,classtags,'DistributionNames',distributiontype); %is
+
+
 model.classifiermodel=testclass;
 
 testconfusion=confusionmat(classtags,testpred)

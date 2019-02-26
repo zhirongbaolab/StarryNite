@@ -2,9 +2,11 @@ function [ prefix ] = getImagePrefix(imageName )
 %matlab port of java code for image loading
 % distinguish between _t###.TIF and diSPIM conventions
 %cut out  just the number
-slicepattern='(.+)\d+.+';
-result=(regexp(imageName,slicepattern,'tokens','forceCellOutput'));
-prefix=(result{1}{1}{1});
+slicepattern='(.+?)\d+.{4,5}$';
+%result=(regexp(imageName,slicepattern,'tokens','forceCellOutput'));
+%prefix=(result{1}{1}{1});
+result=(regexp(imageName,slicepattern,'tokens'));
+prefix=(result{1}{1});
 %{
 %partially ported this but gave up because its equivalent to shorter above
     String tID_8bitConvention = "-t";

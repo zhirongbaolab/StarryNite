@@ -1,4 +1,4 @@
-lowdim=false;
+lowdim=false; %whether to create full covariance model or independent model for division scoring function (initial creation) false in default usage.
 
 %do all embryo model training for bifurcation model
 
@@ -286,7 +286,7 @@ trackingparameters.bifurcationclassifier.daughterkeep=daughterkeep;
 
 %final
 
-[e1,correctflags,computedlabels,model1]=compute_singlemodel_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
-        ,allbackdata(:,backkeep),allforwarddata(:,forwardkeep),trulyambigious,FullyDivLooking,...
+[e1,correctflags,computedlabels,model1]=compute_singlemodel_classificationerror(classtags,alldaughterdata(:,trackingparameters.bifurcationclassifier.daughterkeep)...
+        ,allbackdata(:,trackingparameters.bifurcationclassifier.backkeep),allforwarddata(:,trackingparameters.bifurcationclassifier.forwardkeep),trulyambigious,FullyDivLooking,...
         FNDivLooking,FullyFPLooking,DirtyFPLooking,DivFPLooking);
 

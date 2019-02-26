@@ -8,9 +8,8 @@ for i=1:length(diskSet.xydetdiameters)
     
     
     
-    good=logical(diskSet.xpositions(:,i)~=0|diskSet.ypositions(:,i)~=0);
-    
-    sortedgood=good(raysort2s);
+    %good=logical(diskSet.xpositions(:,i)~=0|diskSet.ypositions(:,i)~=0);
+    %sortedgood=good(raysort2s);
     sortedx=diskSet.xpositions(raysort2s,i);
     sortedy=diskSet.ypositions(raysort2s,i);
      sx=size(Xorig);
@@ -20,13 +19,16 @@ for i=1:length(diskSet.xydetdiameters)
     %need to order and filter points
     %
     %old
-  %  pointsmask=poly2mask(sortedx,sortedy,size(Xorig,1),size(Xorig,2));
-  %  points=find(pointsmask);
-     % [x1,x2]=ind2sub(sx(1:2),points);
+    pointsmask=poly2mask(sortedx,sortedy,size(Xorig,1),size(Xorig,2));
+    points=find(pointsmask);
+      [x1,x2]=ind2sub(sx(1:2),points);
      
-     %   linind=sub2ind(sx,x1,x2,ones(size(x1)).*diskSet.xymax(i,3));
-    %new
-    minx=floor(min(sortedx));
+        linind=sub2ind(sx,x1,x2,ones(size(x1)).*diskSet.xymax(i,3));
+    
+     
+   %{  
+     %new
+   minx=floor(min(sortedx));
     maxx=ceil(max(sortedx));
     miny=floor(min(sortedy));
     maxy=ceil(max(sortedy));
@@ -42,7 +44,11 @@ for i=1:length(diskSet.xydetdiameters)
     %passed in in opposite order to old because computed in geometric not
     %raster space
     linind=sub2ind(sx,x2s,x1s,ones(size(x2s)).*diskSet.xymax(i,3));
-   
+   %}
+    
+    
+    
+    
         %{
     diskSet.diskArea(i)=length(points);
     slice=Xorig(:,:,diskSet.xymax(i,3));
@@ -95,4 +101,3 @@ for i=1:length(diskSet.xydetdiameters)
     
     
 end
-diskSet;

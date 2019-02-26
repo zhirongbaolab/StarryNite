@@ -1,4 +1,8 @@
-%tracking parameter file
+%tracking parameter file used for model retraining, these should match
+%final parameters used for tracking 
+%revised 2/26/2019 only in that it loads a model with current classifier
+%type (not necessary for correctness but I deleted all the old no longer
+%working model files from the codebase)
 
 
 %GENERAL IMAGING PARAMS
@@ -9,7 +13,7 @@
 %load 'redmodel_newnondiv_4nn_recursive_wlinkconfidence_leaveout.mat';
 %load 'red_5_confidence_trainingdata_allfeatures_stable_leaveout_halfdivbad.mat';
 %load 'red_5_confidence_trainingdata_allfeatures_stable_leaveout_halfdivbad_differentnondivbinning.mat';
-load 'red_kernel_standard_final_confidence.mat';
+load '2019TrackingModelv2.mat';
 %load 'clean_red_singlemodel_red_kernel.mat';
 %load 'clean_red_singlemodel_red_normal.mat';
 %load 'clean_red_multimodel_red_normal.mat';

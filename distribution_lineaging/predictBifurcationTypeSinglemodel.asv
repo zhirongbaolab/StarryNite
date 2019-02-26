@@ -73,7 +73,7 @@ topclass(logical(DivFPLooking))=5;
 
  if(forcemode&predicted_class==0)
          %posteriors_class=posterior(trackingparameters.bifurcationclassifier.classifiermodel,data,'HandleMissing','on');
-         [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.classifiermodel,data);
+         [~,posteriors_class]=posterior(trackingparameters.bifurcationclassifier.classifiermodel,data,'HandleMissing','on');
          
          posteriors_class(1)=0;%null out other
             

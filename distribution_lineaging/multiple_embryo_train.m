@@ -1,4 +1,4 @@
-lowdim=false;
+lowdim=false; %whether to create full covariance model or independent model for division scoring function (initial creation) false in default usage.
 
 %do all embryo model training for bifurcation model
 
@@ -40,15 +40,16 @@ div_triple_mean=mean(Tripledata);
 
 if(replacemodel)
     
-trackingparameters.model.div_mean=div_mean;
-trackingparameters.model.div_std=div_std;
-
-trackingparameters.model.div_triple_mean=div_triple_mean;
-trackingparameters.model.div_triple_std=div_triple_std;
+    trackingparameters.model.div_mean=div_mean;
+    trackingparameters.model.div_std=div_std;
+    
+    trackingparameters.model.div_triple_mean=div_triple_mean;
+    trackingparameters.model.div_triple_std=div_triple_std;
+    trackingparameters.model.nodiv_mean=nodiv_mean;
+    trackingparameters.model.nodiv_std=nodiv_std;
 else
     'non replacing model for div '
-    trackingparameters.model.nodiv_mean=nodiv_mean;
-trackingparameters.model.nodiv_std=nodiv_std;
+    
 end
 
 
@@ -242,11 +243,11 @@ backkeep=logical(ones(size(allbackdata,2),1));
 forwardkeep=logical(ones(size(allforwarddata,2),1));
 
 for i=1:size(alldaughterdata,2)
-    [e1,correctflags,computedlabels,model1]=compute_simplified_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
+    [e1,correctflags,computedlabels,model1]=compute_singlemodel_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
         ,allbackdata,allforwarddata(:,forwardkeep),trulyambigious,FullyDivLooking,...
         FNDivLooking,FullyFPLooking,DirtyFPLooking,DivFPLooking);
     daughterkeep(i)=0;
-    [e2,correctflags,computedlabels,model2]=compute_simplified_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
+    [e2,correctflags,computedlabels,model2]=compute_singlemodel_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
         ,allbackdata,allforwarddata(:,forwardkeep),trulyambigious,FullyDivLooking,...
         FNDivLooking,FullyFPLooking,DirtyFPLooking,DivFPLooking);
     if(e2>e1)
@@ -254,11 +255,11 @@ for i=1:size(alldaughterdata,2)
     end
 end
 for i=1:size(allbackdata,2)
-    [e1,correctflags,computedlabels,model1]=compute_simplified_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
+    [e1,correctflags,computedlabels,model1]=compute_singlemodel_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
         ,allbackdata(:,backkeep),allforwarddata(:,forwardkeep),trulyambigious,FullyDivLooking,...
         FNDivLooking,FullyFPLooking,DirtyFPLooking,DivFPLooking);
     backkeep(i)=0;
-    [e2,correctflags,computedlabels,model2]=compute_simplified_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
+    [e2,correctflags,computedlabels,model2]=compute_singlemodel_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
         ,allbackdata(:,backkeep),allforwarddata(:,forwardkeep),trulyambigious,FullyDivLooking,...
         FNDivLooking,FullyFPLooking,DirtyFPLooking,DivFPLooking);
     if(e2>e1)
@@ -266,11 +267,11 @@ for i=1:size(allbackdata,2)
 end
 
 for i=1:size(allforwarddata,2)
-    [e1,correctflags,computedlabels,model1]=compute_simplified_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
+    [e1,correctflags,computedlabels,model1]=compute_singlemodel_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
         ,allbackdata(:,backkeep),allforwarddata(:,forwardkeep),trulyambigious,FullyDivLooking,...
         FNDivLooking,FullyFPLooking,DirtyFPLooking,DivFPLooking);
     forwardkeep(i)=0;
-    [e2,correctflags,computedlabels,model2]=compute_simplified_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
+    [e2,correctflags,computedlabels,model2]=compute_singlemodel_classificationerror(classtags,alldaughterdata(:,daughterkeep)...
         ,allbackdata(:,backkeep),allforwarddata(:,forwardkeep),trulyambigious,FullyDivLooking,...
         FNDivLooking,FullyFPLooking,DirtyFPLooking,DivFPLooking);
     if(e2>e1)
@@ -286,7 +287,7 @@ trackingparameters.bifurcationclassifier.daughterkeep=daughterkeep;
 
 %final
 
-[e1,correctflags,computedlabels,model1]=compute_simplified_classificationerror(classtags,alldaughterdata(:,trackingparameters.bifurcationclassifier.daughterkeep)...
+[e1,correctflags,computedlabels,model1]=compute_singlemodel_classificationerror(classtags,alldaughterdata(:,trackingparameters.bifurcationclassifier.daughterkeep)...
         ,allbackdata(:,trackingparameters.bifurcationclassifier.backkeep),allforwarddata(:,trackingparameters.bifurcationclassifier.forwardkeep),trulyambigious,FullyDivLooking,...
         FNDivLooking,FullyFPLooking,DirtyFPLooking,DivFPLooking);
 

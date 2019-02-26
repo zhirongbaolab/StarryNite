@@ -103,7 +103,7 @@ else
         bestCandidateInfo(count).cand=d1cand(bestIndex);
         bestCandidateInfo(count).candt=d1candt(bestIndex);
         
-        [bbconvector,bbconsum]=computeConfidenceback(esequence,d1candt(bestIndex),d1cand(bestIndex),FNbackcand1lengths(bestIndex));
+        [bbconvector,~]=computeConfidenceback(esequence,d1candt(bestIndex),d1cand(bestIndex),FNbackcand1lengths(bestIndex));
         v=bbconvector;
         if(size(v,1)>1)
             v=mean(bbconvector);
@@ -116,7 +116,7 @@ else
         bestCandidateInfo(count).cand=d2cand(bestIndex);
         bestCandidateInfo(count).candt=d2candt(bestIndex);
         
-        [bbconvector,bbconsum]=computeConfidenceback(esequence,d2candt(bestIndex),d2cand(bestIndex),FNbackcand2lengths(bestIndex));
+        [bbconvector,~]=computeConfidenceback(esequence,d2candt(bestIndex),d2cand(bestIndex),FNbackcand2lengths(bestIndex));
         v=bbconvector;
         if(size(v,1)>1)
             v=mean(bbconvector);
@@ -140,7 +140,7 @@ bestFNBackCorrect=iscorrect;
 if(bestdaughter==-1)
     bestFNBackLength=-1;
 else
-    if (bestdaughter==1);
+    if (bestdaughter==1)
         bestFNBackLength=FNbackcand1lengths(bestIndex);
     else
         bestFNBackLength=FNbackcand2lengths(bestIndex);
@@ -303,9 +303,9 @@ else
         d2lengthforward=traverse_forward(esequence,d2endcandt(minid2),parentd2);
         targetbiflength=min(d1lengthforward,d2lengthforward); %overwrite length of target with min length of bifurcation
         bestFNForwardLengthD2=targetbiflength;
-        [bbconvector,bbconsum]=computeConfidence(esequence,d2endcandt(minid2),parentd1,bestFNForwardLengthD2);
+        [bbconvector,~]=computeConfidence(esequence,d2endcandt(minid2),parentd1,bestFNForwardLengthD2);
         v=bbconvector;
-        [bbconvector,bbconsum]=computeConfidence(esequence,d2endcandt(minid2),parentd2,bestFNForwardLengthD2);
+        [bbconvector,~]=computeConfidence(esequence,d2endcandt(minid2),parentd2,bestFNForwardLengthD2);
         v=[v;bbconvector];
         if(size(v,1)>1)
             v=mean(v);
@@ -314,7 +314,7 @@ else
         [convectord2,consumd2,flengthd2, solidlengthd2]=computeConfidenceRecursive(esequence,d2endcandt(minid2),d2endcand(minid2),trackingparameters);
         
     else %option not orig in division 
-        [bbconvector,bbconsum]=computeConfidence(esequence,d2endcandt(minid2),d2endcand(minid2),bestFNForwardLengthD2);
+        [bbconvector,~]=computeConfidence(esequence,d2endcandt(minid2),d2endcand(minid2),bestFNForwardLengthD2);
         [convectord2,consumd2,flengthd2, solidlengthd2]=computeConfidenceRecursive(esequence,d2endcandt(minid2),d2endcand(minid2),trackingparameters);   
         v=bbconvector;
         if(size(v,1)>1)
@@ -378,7 +378,7 @@ for j=1:minlength
     tcur2=esequence{tcur2}.suc_time(d2curbk,1);
 end
 
-[scores_div,splitscores_div,certainties_div,features]=...
+[~,splitscores_div,~,features]=...
     trackingparameters.DivCostFunction(esequence,i,t,esequence{t}.suc(i,:),esequence{t}.suc_time(i,:), trackingparameters);
 
 BifurcationMeasures=[BifurcationMeasures;features];
@@ -425,9 +425,9 @@ if trackingparameters.recordanswers
     
     if(bestdaughter~=-1)
         if (bestdaughter==1)
-            [match,matchi,matchj ] = checkIfRealSuccessors(d1candt(bestIndex),d1cand(bestIndex),esequence{t}.suc_time(i,1),esequence{t}.suc(i,1),esequence );
+            [match,~,~ ] = checkIfRealSuccessors(d1candt(bestIndex),d1cand(bestIndex),esequence{t}.suc_time(i,1),esequence{t}.suc(i,1),esequence );
         else
-            [match,matchi,matchj ] = checkIfRealSuccessors(d2candt(bestIndex),d2cand(bestIndex),esequence{t}.suc_time(i,2),esequence{t}.suc(i,2),esequence );
+            [match,~,~ ] = checkIfRealSuccessors(d2candt(bestIndex),d2cand(bestIndex),esequence{t}.suc_time(i,2),esequence{t}.suc(i,2),esequence );
             
         end
         simpleFNcorrect=[simpleFNcorrect;match];
@@ -453,8 +453,8 @@ if(minsize==d1length)
     minsizedaughterbestscorelength=bestFNForwardLengthD1;
     minsizedaughterbestscore=bestFNForwardScoreD1;
     minbranchforwardconv=confidenceData.bestforward1conv(count-1,:);
-    minbranchforwardconv_recursive=confidenceData.rforwardd1_conv(count-1,:);
-    minbranchforwardhops_recursive=confidenceData.rforwardd1_consum(count-1,:);
+    %minbranchforwardconv_recursive=confidenceData.rforwardd1_conv(count-1,:);
+    %minbranchforwardhops_recursive=confidenceData.rforwardd1_consum(count-1,:);
     minbranchforward_solidlength=confidenceData.rforwardd1_solidlength(count-1);
     minbranchforward_timelength=confidenceData.rforwardd1_flength(count-1);
     minbranchforwardxy=splitFNMatchScore.forwardd1xy(count-1);
@@ -464,8 +464,8 @@ else
     minsizedaughterbestscorelength=bestFNForwardLengthD2;
     minsizedaughterbestscore=bestFNForwardScoreD2;
     minbranchforwardconv=confidenceData.bestforward2conv(count-1,:);
-    minbranchforwardconv_recursive=confidenceData.rforwardd2_conv(count-1,:);
-    minbranchforwardhops_recursive=confidenceData.rforwardd2_consum(count-1,:);
+    %minbranchforwardconv_recursive=confidenceData.rforwardd2_conv(count-1,:);
+    %minbranchforwardhops_recursive=confidenceData.rforwardd2_consum(count-1,:);
     minbranchforward_solidlength=confidenceData.rforwardd2_solidlength(count-1);
     minbranchforward_timelength=confidenceData.rforwardd2_flength(count-1);
     minbranchforwardxy=splitFNMatchScore.forwardd2xy(count-1);
