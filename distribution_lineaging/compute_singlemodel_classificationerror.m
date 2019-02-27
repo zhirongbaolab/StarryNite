@@ -3,9 +3,12 @@ function [error ,correctflags,computedclasses,model] = ...
     allforwarddata,trulyambigious,FullyDivLooking,...
     FNDivLooking,FullyFPLooking,DirtyFPLooking,DivFPLooking)
 %train a classifier model based on data and labels and return the model and its errors
+%normal mode uses gaussian model setting flag to kernel sets up kernel
+%density based pdf which tends to be more accurate slighty for more similar
+%data sets but generalizes less (across imaging modalities etc)
 
-distributiontypemain='kernel';
-%distributiontypemain='normal';
+%distributiontypemain='kernel';
+distributiontypemain='normal';
 correct=0;
 correctflags=ones(size(classtags));
 computedclasses=zeros(size(classtags));
@@ -62,13 +65,24 @@ distributiontype={'mvmn'};
 for i=1:size(data,2)-1
     distributiontype{i+1}=distributiontypemain;
 end
+%NB for 2019 retraining I stopped program here and saved mat file of
+%training data trained and saved model manually and then updated code to
+%use modern classifier class but currently this should run with new
+%automatically as intended
 
-%distributiontype=distributiontypemain;
-testclass=NaiveBayes.fit(data,classtags,'distribution',distributiontype);
 data=[topclass,alldaughterdata,allbackdata,allforwarddata];
-%data=[alldaughterdata,allbackdata,allforwarddata];
 
+%old classifier training/prediction
+%{
+testclass=NaiveBayes.fit(data,classtags,'distribution',distributiontype);
 testpred=predict(testclass,data,'HandleMissing','on');
+%}
+
+%new training/prediction
+testclass=fitcnb(data,classtags,'DistributionNames',distributiontype); %is
+testpred=predict(testclass,data);
+
+
 model.classifiermodel=testclass;
 
 testconfusion=confusionmat(classtags,testpred)

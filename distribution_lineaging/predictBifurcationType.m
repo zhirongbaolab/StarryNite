@@ -6,6 +6,8 @@ function predicted_class = predictBifurcationType(...
 %given all data about bifurcation broken into 3 blocks
 %classify bifurcation with topology of bifurcation determining which blocks
 %are present/relevant
+%note that this code should now never be calle din normal use because only
+%singlemodels have been regenerated with the updated classifier type
 
 %force classifier to not give up, picking the best option excluding the
 %other class
@@ -37,11 +39,15 @@ if(trulyambigious) %short, fn back, fn forward exist
         allbackdata(trackingparameters.bifurcationclassifier.backkeep),...
         allforwarddata(trackingparameters.bifurcationclassifier.forwardkeep)];
  %   data(isinf(data))=10;
-    predicted_class=predict(trackingparameters.bifurcationclassifier.ambigious,data,'HandleMissing','on');
+ %   predicted_class=predict(trackingparameters.bifurcationclassifier.ambigious,data,'HandleMissing','on');
+ predicted_class=predict(trackingparameters.bifurcationclassifier.ambigious,data);
  
     %force mode pick best non other class
     if(forcemode&predicted_class==0)
-         posteriors_class=posterior(trackingparameters.bifurcationclassifier.ambigious,data,'HandleMissing','on');
+         %posteriors_class=posterior(trackingparameters.bifurcationclassifier.ambigious,data,'HandleMissing','on');
+         
+         [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.ambigious,data);
+            
             posteriors_class(1)=0;%null out other 
             [val,ind]=max(posteriors_class);
             classvals=[0,2,3];%hack i hate hard code this but seem to have a hard time extracting
@@ -52,10 +58,13 @@ if(trulyambigious) %short, fn back, fn forward exist
 else if(FullyFPLooking|FullyDivLooking)
         data=alldaughterdata(trackingparameters.bifurcationclassifier.daughterkeep);
        % data(isinf(data))=10;
-        predicted_class=predict(trackingparameters.bifurcationclassifier.fp_div,data,'HandleMissing','on');
+     %   predicted_class=predict(trackingparameters.bifurcationclassifier.fp_div,data,'HandleMissing','on');
+        predicted_class=predict(trackingparameters.bifurcationclassifier.fp_div,data);
         
         if(forcemode&predicted_class==0)
-            posteriors_class=posterior(trackingparameters.bifurcationclassifier.fp_div,data,'HandleMissing','on');
+          %  posteriors_class=posterior(trackingparameters.bifurcationclassifier.fp_div,data,'HandleMissing','on');
+           [~,  posteriors_class]=predict(trackingparameters.bifurcationclassifier.fp_div,data);
+          
             posteriors_class(1)=0;%null out other 
             [val,ind]=max(posteriors_class);
             classvals=[0,1,3];%hack i hate hard code this but seem to have a hard time extracting
@@ -69,10 +78,13 @@ else if(FullyFPLooking|FullyDivLooking)
                 allbackdata(trackingparameters.bifurcationclassifier.backkeep)];
             %    data(isinf(data))=10;
             %           predicted_class=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data);
-            predicted_class=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data,'HandleMissing','on');
-            
+           % predicted_class=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data,'HandleMissing','on');
+             predicted_class=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data);
+          
             if(forcemode&predicted_class==0)
-                posteriors_class=posterior(trackingparameters.bifurcationclassifier.dirtyfp_fn,data,'HandleMissing','on');
+%                posteriors_class=posterior(trackingparameters.bifurcationclassifier.dirtyfp_fn,data,'HandleMissing','on');
+                [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data);
+
                 posteriors_class(1)=0;%null out other 
             [val,ind]=max(posteriors_class);
             classvals=[0,1,2,3];%hack i hate hard code this but seem to have a hard time extracting
@@ -84,11 +96,14 @@ else if(FullyFPLooking|FullyDivLooking)
                 data=[alldaughterdata(trackingparameters.bifurcationclassifier.daughterkeep),...
                     allforwarddata(trackingparameters.bifurcationclassifier.forwardkeep)];
          %       data(isinf(data))=10;
-                predicted_class=predict(trackingparameters.bifurcationclassifier.divfp,data,'HandleMissing','on');
+           %     predicted_class=predict(trackingparameters.bifurcationclassifier.divfp,data,'HandleMissing','on');
+           predicted_class=predict(trackingparameters.bifurcationclassifier.divfp,data);
            
                 if(forcemode&predicted_class==0)
-                    posteriors_class=posterior(trackingparameters.bifurcationclassifier.divfp,data,'HandleMissing','on');
-                   posteriors_class(1)=0;%null out other 
+                  %  posteriors_class=posterior(trackingparameters.bifurcationclassifier.divfp,data,'HandleMissing','on');
+                   [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.divfp,data);
+                  
+                    posteriors_class(1)=0;%null out other 
             [val,ind]=max(posteriors_class);
             classvals=[0,1,3];%hack i hate hard code this but seem to have a hard time extracting
             predicted_class=classvals(ind);

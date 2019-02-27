@@ -66,7 +66,7 @@ end
 %use tiled if saving memory or by default, otherwise use seprable memory
 %intensive all at once call
 
-if (~exist('conservememory','var')||conservememory)
+if (exist('conservememory','var')&&conservememory)
     X=tiledogfilter(X,sigma,anisotropy);
 else
 %Fernando Amat: this code takes more memory (about 2 times) but is much faster
@@ -116,7 +116,8 @@ diskSet=calculateSliceGFP(Xorig,diskSet);
   e.diskintensity=diskSet.xymaximavals;
     e.diskGFPsums=diskSet.GFPsums;
       e.diskArea=diskSet.diskArea;
-            e.diskMax=diskSet.diskMax;
+            e.diskMax=diskSet.diskMax; %as 1/31/2019 I dont think this is
+           % used and I'm removing it to test
 if(savedata)
   
   

@@ -5,25 +5,21 @@ volsize=size(Xfilt);
 centers=[];
   querydiameter=diameter;
 
-potential=find(xymaximas(:,3)==center(3)+zoffset);
-%potential=xymaximas(:,3)==(center(3)+zoffset);
-%potential=potential&(xymaximas(:,1)<(center(1)+diameter/2));
-%potential=potential&(xymaximas(:,1)>(center(1)-diameter/2));
-%potential=potential&(xymaximas(:,2)<(center(2)+diameter/2));
-%potential=potential&(xymaximas(:,2)>(center(2)-diameter/2));
-%potential=find(potential);
+%this block is takinig 1/10th of execution time
 
-%%dist=distance(xymaximas(potential,:)',[center(1),center(2),center(3)+zoffset]');
-%dist=distanceToPoint([center(1),center(2),center(3)+zoffset]',xymaximas(potential,:)');
+potential=find(xymaximas(:,3)==center(3)+zoffset);
 dist=distances(potential);
 smalldist=(dist<querydiameter/2);
 possiblemaximas=xymaximas(potential(smalldist),:);
-%possiblemaximas=xymaximas(potential,:);
-%possiblemaximas=possiblemaximas(smalldist,:);
-
-%indicies=potential(smalldist);
 indicies=potential(smalldist);
 
+%{
+%is this faster?
+%no%
+possiblieindicies=(xymaximas(:,3)==center(3)+zoffset&distances'<querydiameter/2);
+possiblemaximas=xymaximas(possiblieindicies,:);
+indicies=find(possiblieindicies);
+%}
 sizes=size(possiblemaximas);
 for i=1:sizes(1)
     querycenter=possiblemaximas(i,:);

@@ -3,16 +3,15 @@ function esequence=greedyEndScore(esequence,trackingparameters)
 %nondivision non easy 1-1 links, though it is capable of creating gap links
 %if they are in the candidate set (currently they are not)
 
+%these global variables were for algorithm testing/tuning some may be
+%unusued in current training scheme.
 global answers;%store answer for post tunign
 %greedyEndMatch(esequence,trackingparameters)
 %  forward main cases for each end consider it dividing into up ahead
 %  starts or continuing with or without a gap
 nodes=0;
-
 global alldatadiv;
 global alldatanondiv;
-global alldatadiv_taken;
-global alldatanondiv_taken;
 
 for t=trackingparameters.starttime:trackingparameters.endtime-1
    %hysteresis control loop, unused if no hysteresis;
@@ -160,10 +159,17 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
                         alldatanondiv=[alldatanondiv;ones(size(splitscores,1),1)*nodes,nondiv_choices_correct,splitscores,endlength*ones(size(splitscores,1),1),candidates_lengths,candidates_t-t,top1,top2,nondivscorecomponents];
                     end
                 else
+                    %because of repeated large concatenation this is a very
+                    %expensive line, and as far as I can tell the variable
+                    %is not used anywhere, though I think it as used in non
+                    %production training code to evaluate different scoring
+                    %methods I am therefore commenting it out in production
+                    %mode, not sure why it was ever here
+                    %{
                     if(~isempty(splitscores))
                         alldatanondiv=[alldatanondiv;ones(size(splitscores,1),1)*nodes,ones(size(splitscores,1),1)*-1,splitscores];
                     end
-                    
+                    %}
                 end
                 
                 

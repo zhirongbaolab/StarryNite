@@ -46,6 +46,14 @@ for example=1:length(tlist)
     %used in simple tiff case except as an error correction last ditch if
     %the java name parsign doesn't generate an existing file name
     endprefixlocation=max(strfind(imageLocation,time_prefix));
+    %if not found the parameter might be misconfigured try default
+    if isempty(endprefixlocation)
+        endprefixlocation=max(strfind(imageLocation,'_'));
+    end
+    if isempty(endprefixlocation)
+        error('Can not identify time prefix string to parse image name aborting');
+    end
+    
     seplocation=max(strfind(imageLocation,filesep));
     embryodir=imageLocation(1:seplocation);
     embryonumber=imageLocation(seplocation+1:endprefixlocation-1);

@@ -68,10 +68,14 @@ topclass(logical(DivFPLooking))=5;
         allforwarddata(trackingparameters.bifurcationclassifier.forwardkeep)];
 %}
     
- predicted_class=predict(trackingparameters.bifurcationclassifier.classifiermodel,data,'HandleMissing','on');
-    if(forcemode&predicted_class==0)
-         posteriors_class=posterior(trackingparameters.bifurcationclassifier.classifiermodel,data,'HandleMissing','on');
-            posteriors_class(1)=0;%null out other
+% predicted_class=predict(trackingparameters.bifurcationclassifier.classifiermodel,data,'HandleMissing','on');
+  predicted_class=predict(trackingparameters.bifurcationclassifier.classifiermodel,data);
+
+ if(forcemode&predicted_class==0)
+         %posteriors_class=posterior(trackingparameters.bifurcationclassifier.classifiermodel,data,'HandleMissing','on');
+         [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.classifiermodel,data);
+         
+         posteriors_class(1)=0;%null out other
             
             posteriors_class(4)=0;%null out FP
             [val,ind]=max(posteriors_class);

@@ -32,9 +32,9 @@ if(isempty(reversecand))
     return
 else
     
-    [scores_forwardfromback,matchingsfowardfromback,playersstartffb,playersendffb]=...
+    [scores_forwardfromback,~,~,~]=...
         gapScore(esequence,i,t,reversecand,reversecandt,trackingparameters);
-    [s,minirf]=min(scores_forwardfromback);
+    [~,minirf]=min(scores_forwardfromback);
     
     
     [convectorf,consumf,flengthf, solidlengthf]=...
