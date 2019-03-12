@@ -24,7 +24,9 @@ end
 for t=trackingparameters.endtime:-1:trackingparameters.starttime+1
     if(~(isempty(esequence{t-1}.finalpoints)|isempty(esequence{t}.finalpoints)))
     distances=distance_anisotropic(esequence{t-1}.finalpoints',esequence{t}.finalpoints',trackingparameters.anisotropyvector);
-
+    
+    %esequence{t-1}.forwardDistances=distances; %save this computation for later test 3/4/2019
+    
     for i=1:size(esequence{t}.finalpoints,1)
         
         candidates=linspace(1,size(esequence{t-1}.finalpoints,1),size(esequence{t-1}.finalpoints,1));

@@ -48,7 +48,7 @@ end
 
 
 if (isfield(trackingparameters,'abscutoff')&&trackingparameters.abscutoff)
-    'absolute tracking working working'
+    'absolute tracking working '
     trackingparameters.forwardcutoff=trackingparameters.candidateCutoff*ones(size(trackingparameters.forwardcutoff));
 end
 

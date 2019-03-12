@@ -395,6 +395,9 @@ else
     else
         im=X;
     end
+    if(get(handles.splitimage,'Value'))
+        im=fliplr(im);
+    end
 end
 %{
 if (get(handles.simpletiff,'Value'))

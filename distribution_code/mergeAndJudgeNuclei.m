@@ -38,8 +38,8 @@ for i=1:length(mergesets)
     points=[points;mean(pointset(:,1:3))];
      averagedpoints=[averagedpoints;mean(pointset(:,1:3))];
     height=max(pointset(:,3))-min(pointset(:,3))+1;
-    
-    merged_sliceindicies={merged_sliceindicies{:},pointset(:,4)};
+    merged_sliceindicies=[merged_sliceindicies,pointset(:,4)];
+    %merged_sliceindicies={merged_sliceindicies{:},pointset(:,4)};
     aspectratios=[aspectratios;height*anisotropy/max(diameters(curr))];
     mdiameters=[mdiameters;max(diameters(curr))];
     mmaximas=[mmaximas;max(maxvals(curr))];
@@ -48,7 +48,7 @@ end
 
 %currently not discarding anything
 for i=1:length(centers)
-    if(isempty(find(i==merging)))%if not merged add to point set
+    if(isempty(find(i==merging, 1)))%if not merged add to point set
         cc=centers{i};
         cc=cc(ranges{i},:);
         height=max(cc(:,3))-min(cc(:,3))+1;
@@ -63,8 +63,8 @@ for i=1:length(centers)
         aspectratios=[aspectratios;height*anisotropy/diameters(i)];
         mdiameters=[mdiameters;diameters(i)];
         mmaximas=[mmaximas;maxvals(i)];
-        merged_sliceindicies={merged_sliceindicies{:},cc(:,4)};
-       
+        merged_sliceindicies=[merged_sliceindicies ,cc(:,4)];
+       %merged_sliceindicies={merged_sliceindicies{:},cc(:,4)};
         mergedlogoddssum=[mergedlogoddssum;sum(logoddsset)];
     end
 end

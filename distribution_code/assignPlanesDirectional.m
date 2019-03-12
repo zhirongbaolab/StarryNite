@@ -1,7 +1,7 @@
 
 %discover the set of x,y maximas in cylinder around center
-function centers=assignPlanesDirectional(distances,center,diameter,Xfilt,xymaximas,zoffset,xydetdiameters,anisotropy)
-volsize=size(Xfilt);
+function centers=assignPlanesDirectional(distances,center,diameter,volsize,xymaximas,zoffset,anisotropy)
+%volsize=size(Xfilt);
 centers=[];
   querydiameter=diameter;
 
@@ -32,6 +32,6 @@ end
  nextplane=center(3)+zoffset+sign(zoffset);
  
 if(zoffset~=0&&~isempty(centers)&&nextplane>=1&&nextplane<=volsize(3)) %if found something here and next plane is in volume
-       centers=[centers;assignPlanesDirectional(distances,center,diameter,Xfilt,xymaximas,zoffset+sign(zoffset),xydetdiameters,anisotropy)];
+       centers=[centers;assignPlanesDirectional(distances,center,diameter,volsize,xymaximas,zoffset+sign(zoffset),anisotropy)];
 end
     

@@ -204,7 +204,9 @@ for example=1:length(tlist)
         end
     end
     
-    X=imresize(X,downsample);
+  if downsample~=1
+      X=imresize(X,downsample);
+  end
     if(exist('Xr'))
         Xr=imresize(Xr,downsample);
     end

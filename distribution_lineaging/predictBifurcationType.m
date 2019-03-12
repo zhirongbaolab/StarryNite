@@ -34,38 +34,56 @@ DirtyFPLooking=small&anysmalllacksforwardFN&hasbackwardFN;
 DivFPLooking=  small&~anysmalllacksforwardFN&~hasbackwardFN;
 trulyambigious=small&~anysmalllacksforwardFN&hasbackwardFN;
 
-if(trulyambigious) %short, fn back, fn forward exist 
+if(trulyambigious) %short, fn back, fn forward exist
     data=[alldaughterdata(trackingparameters.bifurcationclassifier.daughterkeep),...
         allbackdata(trackingparameters.bifurcationclassifier.backkeep),...
         allforwarddata(trackingparameters.bifurcationclassifier.forwardkeep)];
- %   data(isinf(data))=10;
- %   predicted_class=predict(trackingparameters.bifurcationclassifier.ambigious,data,'HandleMissing','on');
- predicted_class=predict(trackingparameters.bifurcationclassifier.ambigious,data);
- 
+    %   data(isinf(data))=10;
+    %IF old style classifier use correct prediction call, cant get around
+    %one will create error in old and one in new matlab however.
+    if (isa(trackingparameters.bifurcationclassifier.ambigious,'NaiveBayes'))
+        predicted_class=predict(trackingparameters.bifurcationclassifier.ambigious,data,'HandleMissing','on');
+    else
+        predicted_class=predict(trackingparameters.bifurcationclassifier.ambigious,data);
+    end
     %force mode pick best non other class
     if(forcemode&predicted_class==0)
-         %posteriors_class=posterior(trackingparameters.bifurcationclassifier.ambigious,data,'HandleMissing','on');
-         
-         [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.ambigious,data);
+        %IF old style classifier use correct prediction call, cant get around
+        %one will create error in old and one in new matlab however.
+        if (isa(trackingparameters.bifurcationclassifier.ambigious,'NaiveBayes'))
             
-            posteriors_class(1)=0;%null out other 
-            [val,ind]=max(posteriors_class);
-            classvals=[0,2,3];%hack i hate hard code this but seem to have a hard time extracting
-            predicted_class=classvals(ind);
+            posteriors_class=posterior(trackingparameters.bifurcationclassifier.ambigious,data,'HandleMissing','on');
+        else
+            [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.ambigious,data);
+        end
+        posteriors_class(1)=0;%null out other
+        [val,ind]=max(posteriors_class);
+        classvals=[0,2,3];%hack i hate hard code this but seem to have a hard time extracting
+        predicted_class=classvals(ind);
     end
     
- %no back, forward data is irrelevant because doesnt exist or long 
+    %no back, forward data is irrelevant because doesnt exist or long
 else if(FullyFPLooking|FullyDivLooking)
         data=alldaughterdata(trackingparameters.bifurcationclassifier.daughterkeep);
-       % data(isinf(data))=10;
-     %   predicted_class=predict(trackingparameters.bifurcationclassifier.fp_div,data,'HandleMissing','on');
-        predicted_class=predict(trackingparameters.bifurcationclassifier.fp_div,data);
-        
+        % data(isinf(data))=10;
+        %IF old style classifier use correct prediction call, cant get around
+        %one will create error in old and one in new matlab however.
+        if (isa(trackingparameters.bifurcationclassifier.fp_div,'NaiveBayes'))
+            
+            predicted_class=predict(trackingparameters.bifurcationclassifier.fp_div,data,'HandleMissing','on');
+        else
+            predicted_class=predict(trackingparameters.bifurcationclassifier.fp_div,data);
+        end
         if(forcemode&predicted_class==0)
-          %  posteriors_class=posterior(trackingparameters.bifurcationclassifier.fp_div,data,'HandleMissing','on');
-           [~,  posteriors_class]=predict(trackingparameters.bifurcationclassifier.fp_div,data);
-          
-            posteriors_class(1)=0;%null out other 
+            %IF old style classifier use correct prediction call, cant get around
+            %one will create error in old and one in new matlab however.
+            if (isa(trackingparameters.bifurcationclassifier.fp_div,'NaiveBayes'))
+                
+                posteriors_class=posterior(trackingparameters.bifurcationclassifier.fp_div,data,'HandleMissing','on');
+            else
+                [~,  posteriors_class]=predict(trackingparameters.bifurcationclassifier.fp_div,data);
+            end
+            posteriors_class(1)=0;%null out other
             [val,ind]=max(posteriors_class);
             classvals=[0,1,3];%hack i hate hard code this but seem to have a hard time extracting
             predicted_class=classvals(ind);
@@ -78,40 +96,59 @@ else if(FullyFPLooking|FullyDivLooking)
                 allbackdata(trackingparameters.bifurcationclassifier.backkeep)];
             %    data(isinf(data))=10;
             %           predicted_class=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data);
-           % predicted_class=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data,'HandleMissing','on');
-             predicted_class=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data);
-          
-            if(forcemode&predicted_class==0)
-%                posteriors_class=posterior(trackingparameters.bifurcationclassifier.dirtyfp_fn,data,'HandleMissing','on');
-                [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data);
-
-                posteriors_class(1)=0;%null out other 
-            [val,ind]=max(posteriors_class);
-            classvals=[0,1,2,3];%hack i hate hard code this but seem to have a hard time extracting
-            predicted_class=classvals(ind);
+            %IF old style classifier use correct prediction call, cant get around
+            %one will create error in old and one in new matlab however.
+            if (isa(trackingparameters.bifurcationclassifier.dirtyfp_fn,'NaiveBayes'))
+                
+                predicted_class=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data,'HandleMissing','on');
+            else
+                predicted_class=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data);
             end
-                  
+            if(forcemode&predicted_class==0)
+                %IF old style classifier use correct prediction call, cant get around
+                %one will create error in old and one in new matlab however.
+                if (isa(trackingparameters.bifurcationclassifier.dirtyfp_fn,'NaiveBayes'))
+                    posteriors_class=posterior(trackingparameters.bifurcationclassifier.dirtyfp_fn,data,'HandleMissing','on');
+                else
+                    [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.dirtyfp_fn,data);
+                end
+                posteriors_class(1)=0;%null out other
+                [val,ind]=max(posteriors_class);
+                classvals=[0,1,2,3];%hack i hate hard code this but seem to have a hard time extracting
+                predicted_class=classvals(ind);
+            end
+            
         else
-            if (DivFPLooking)%no back short and forward exists 
+            if (DivFPLooking)%no back short and forward exists
                 data=[alldaughterdata(trackingparameters.bifurcationclassifier.daughterkeep),...
                     allforwarddata(trackingparameters.bifurcationclassifier.forwardkeep)];
-         %       data(isinf(data))=10;
-           %     predicted_class=predict(trackingparameters.bifurcationclassifier.divfp,data,'HandleMissing','on');
-           predicted_class=predict(trackingparameters.bifurcationclassifier.divfp,data);
-           
+                %       data(isinf(data))=10;
+                %IF old style classifier use correct prediction call, cant get around
+                %one will create error in old and one in new matlab however.
+                if (isa(trackingparameters.bifurcationclassifier.divfp,'NaiveBayes'))
+                    
+                    predicted_class=predict(trackingparameters.bifurcationclassifier.divfp,data,'HandleMissing','on');
+                else
+                    predicted_class=predict(trackingparameters.bifurcationclassifier.divfp,data);
+                end
                 if(forcemode&predicted_class==0)
-                  %  posteriors_class=posterior(trackingparameters.bifurcationclassifier.divfp,data,'HandleMissing','on');
-                   [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.divfp,data);
-                  
-                    posteriors_class(1)=0;%null out other 
-            [val,ind]=max(posteriors_class);
-            classvals=[0,1,3];%hack i hate hard code this but seem to have a hard time extracting
-            predicted_class=classvals(ind);
-
+                    %IF old style classifier use correct prediction call, cant get around
+                    %one will create error in old and one in new matlab however.
+                    if (isa(trackingparameters.bifurcationclassifier.divfp,'NaiveBayes'))
+                        posteriors_class=posterior(trackingparameters.bifurcationclassifier.divfp,data,'HandleMissing','on');
+                        
+                    else
+                        [~,posteriors_class]=predict(trackingparameters.bifurcationclassifier.divfp,data);
+                    end
+                    posteriors_class(1)=0;%null out other
+                    [val,ind]=max(posteriors_class);
+                    classvals=[0,1,3];%hack i hate hard code this but seem to have a hard time extracting
+                    predicted_class=classvals(ind);
+                    
                 end
                 
             end
-        end        
+        end
     end
 end
 
@@ -119,17 +156,17 @@ end
 computedclassificationvector=[computedclassificationvector,predicted_class];
 
 if(forcemode&predicted_class==0)
-         predicted_class=1;
+    predicted_class=1;
 end
 
 %classifier sometimes fails in unexplored parts of space
 if(isnan(predicted_class))
     'Nan returned as class label, unexpected or nan input input vector'
-     if(forcemode)
-         predicted_class=1;
-     else
+    if(forcemode)
+        predicted_class=1;
+    else
         predicted_class=0;
-     end
+    end
 end
 
 
@@ -139,20 +176,20 @@ end
 % as 2/19/2014 I added this to decouple storage of classification result from use of
 % oracle in order to compute confusion matrix for test data
 if(isfield(trackingparameters,'useclassifieroracle')&&trackingparameters.useclassifieroracle)
-    %    
+    %
     cleanlybad=(removed(count-1,11)+removed(count-1,12)>=minsize');
     cleanlybad=cleanlybad&minsize<=smallcutoff;
-   % slightlybad=(removed(count-1,11)+removed(count-1,12)>=minsize*.5');
-   % slightlybad=slightlybad&minsize<=smallcutoff;
+    % slightlybad=(removed(count-1,11)+removed(count-1,12)>=minsize*.5');
+    % slightlybad=slightlybad&minsize<=smallcutoff;
     realdiv=logical(removed(count-1,8));
     %    FNback=(simpleFNcorrect(count-1)==1)&~realdiv&~cleanlybad;
     FNback=(removed(count-1,23)|bestFNBackCorrect|(simpleFNcorrect(count-1)==1))&~realdiv&~cleanlybad;
-    %fn back corect should be superset so was redundant above and can be taken out  
-  %  FNback=(removed(count-1,23)|(simpleFNcorrect(count-1)==1))&~realdiv&~cleanlybad;
-  
+    %fn back corect should be superset so was redundant above and can be taken out
+    %  FNback=(removed(count-1,23)|(simpleFNcorrect(count-1)==1))&~realdiv&~cleanlybad;
+    
     % FNback=removed(count-1,23);%bestFNBackCorrect;%
     
-   % other=(~cleanlybad&~FNback&~realdiv);
+    % other=(~cleanlybad&~FNback&~realdiv);
     
     
     predicted_class=0; %other=

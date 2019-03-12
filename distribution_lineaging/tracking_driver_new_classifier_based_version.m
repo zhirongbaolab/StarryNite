@@ -260,8 +260,8 @@ if(trackingparameters.recordanswers)
     
     expected_corrections=[];
     expected_corrections.other=length(find(~FNback&~cleanlybad&~realdiv));
-    expected_corrections.FPdet=sum(minsize(find(cleanlybad&caseofinterest)));
-    expected_corrections.FPtrack=sum(minsize(find(cleanlybad&caseofinterest)));
+    expected_corrections.FPdet=sum(minsize(cleanlybad&caseofinterest));
+    expected_corrections.FPtrack=sum(minsize(cleanlybad&caseofinterest));
     expected_corrections.FNdet=sum(splitFNMatchScore.backgapsize(((simpleFNcorrect==1)&~realdiv&~cleanlybad&caseofinterest))-1);
     %expected_corrections.FPtrack_FN=length(FNback&~cleanlybad&~realdiv);
     expected_corrections.FPtrack_FN=length(find((simpleFNcorrect==1)&~realdiv&~cleanlybad&caseofinterest));
