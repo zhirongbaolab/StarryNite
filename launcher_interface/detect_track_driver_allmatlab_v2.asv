@@ -152,26 +152,24 @@ cleanimagelocation=imageLocation;
 cleanimagelocation(strfind(imageLocation,'\'))='/';
 if(outputSlice)
     %if output slices save an xml file that opens them
-    newDir=[embryodir,'image/tif'];
-    newDir(strfind(newDir,'\'))='/';%avoid matlab escape charactering path
-    cleanimagelocation=sprintf('%s/%s-t%03d-p%02d.tif',newDir,embryonumber,tlist(1),1);
+    cleanimagelocation=sprintf('%s/%s-t%03d-p%02d.tif',newDir,basename,time,slice)
     fprintf (file,['<image file="',cleanimagelocation,'"/>\n']);
-    fprintf (file,'<Flip FlipMode="0"/>\n');
-    fprintf (file,'<Split SplitMode="0"/>\n');
+    fprintf (file,['<Flip FlipMode="0"/>\n']);
+    fprintf (file,['<Split SplitMode="0"/>\n']);
 else
-    fprintf (file,['<image file="',cleanimagelocation,'"/>\n']);
-    
-    if(~exist('flipstack')||~flipstack)
-        fprintf (file,'<Flip FlipMode="0"/>\n');
-    else
-        fprintf (file,'<Flip FlipMode="1"/>\n');
-    end
-    if(~exist('splitstack')||~splitstack)
-        fprintf (file,'<Split SplitMode="0"/>\n');
-    else
-        fprintf (file,'<Split SplitMode="1"/>\n');
-    end
-    
+fprintf (file,['<image file="',cleanimagelocation,'"/>\n']);
+
+if(~exist('flipstack')||~flipstack)
+    fprintf (file,['<Flip FlipMode="0"/>\n']);
+else
+    fprintf (file,['<Flip FlipMode="1"/>\n']);
+end
+if(~exist('splitstack')||~splitstack)
+    fprintf (file,['<Split SplitMode="0"/>\n']);
+else
+    fprintf (file,['<Split SplitMode="1"/>\n']);
+end
+
 end
 
 %if (time_prefix is not standard (ie has been manually set in param file
@@ -214,28 +212,18 @@ end
 %but do need to specify if flipping or splitting in the interest of
 %legiblity, though these will be typically interpreted correctly based on
 %image name
-if(outputSlice)
-    %if output slices save an xml file that opens them
-    newDir=[embryodir,'image/tif'];
-    newDir(strfind(newDir,'\'))='/';%avoid matlab escape charactering path
-    cleanimagelocation=sprintf('%s/%s-t%03d-p%02d.tif',newDir,embryonumber,tlist(1),1);
-    fprintf (file,['<image file="',cleanimagelocation,'"/>\n']);
-    fprintf (file,'<Flip FlipMode="0"/>\n');
-    fprintf (file,'<Split SplitMode="0"/>\n');
+fprintf (file,['<image file="',cleanimagelocation,'"/>\n']);
+if(~exist('flipstack')||~flipstack)
+    fprintf (file,['<Flip FlipMode="0"/>\n']);
 else
-    
-    fprintf (file,['<image file="',cleanimagelocation,'"/>\n']);
-    if(~exist('flipstack')||~flipstack)
-        fprintf (file,['<Flip FlipMode="0"/>\n']);
-    else
-        fprintf (file,['<Flip FlipMode="1"/>\n']);
-    end
-    if(~exist('splitstack')||~splitstack)
-        fprintf (file,['<Split SplitMode="0"/>\n']);
-    else
-        fprintf (file,['<Split SplitMode="1"/>\n']);
-    end
+    fprintf (file,['<Flip FlipMode="1"/>\n']);
 end
+if(~exist('splitstack')||~splitstack)
+    fprintf (file,['<Split SplitMode="0"/>\n']);
+else
+    fprintf (file,['<Split SplitMode="1"/>\n']);
+end
+
 
 fprintf (file,['<nuclei file="',zipnameedited,'"/>\n']);
 

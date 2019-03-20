@@ -386,7 +386,6 @@ if(get(handles.splitimage,'Value'))
         X=im2double(((loadCellStackMetamorph([PathName,FileName(1:ind-1)],framenum,1,30,[0,0,0,0],false))));
     end
     im=max(X,[],3);
-    im=fliplr(im);
 else
     X=loadSimpleStackTiff([PathName,FileName]);
     %simple tiff or slice
@@ -395,10 +394,12 @@ else
     else
         im=X;
     end
+
+end
     if(get(handles.splitimage,'Value'))
         im=fliplr(im);
     end
-end
+
 %{
 if (get(handles.simpletiff,'Value'))
             X=loadSimpleStackTiff([PathName,FileName]);
