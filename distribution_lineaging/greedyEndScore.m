@@ -125,38 +125,40 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
                 %  scores_nondiv=certainties_nondiv;
                 
                 if (trackingparameters.recordanswers)
-                    %answer info
-                    %anwer from cannonical answer
-                    canswer_suc=esequence{t}.correct_suc(i,:);
-                    canswer_suc_time=esequence{t}.correct_suc_time(i,:);
-                    nondiv_choices_correct=zeros(size(scores_nondiv));
-                    top2=zeros(size(scores_nondiv));
-                    %
-                    for j=1:length(nondiv_choices_correct)
-                        %tests if it is correct in sense of being nondiv and
-                        %correct
-                        %{
+                    if isfield(esequence{t},'correct_suc')
+                        %answer info
+                        %anwer from cannonical answer
+                        canswer_suc=esequence{t}.correct_suc(i,:);
+                        canswer_suc_time=esequence{t}.correct_suc_time(i,:);
+                        nondiv_choices_correct=zeros(size(scores_nondiv));
+                        top2=zeros(size(scores_nondiv));
+                        %
+                        for j=1:length(nondiv_choices_correct)
+                            %tests if it is correct in sense of being nondiv and
+                            %correct
+                            %{
                     nondiv_choices_correct(j)=canswer_suc(2)==-1&&...
                         canswer_suc(1)==candidates(j)&&...
                         canswer_suc_time(1)==candidates_t(j);
-                        %}
+                            %}
+                            
+                            %tests in sense of being part of real lineage
+                            %(returns true for half of a division)
+                            nondiv_choices_correct(j)=...
+                                (canswer_suc(1)==candidates(j)&&...
+                                canswer_suc_time(1)==candidates_t(j))|...
+                                (canswer_suc(2)==candidates(j)&&...
+                                canswer_suc_time(2)==candidates_t(j));
+                            top2(j)=length(esequence{candidates_t(j)}.predecessor_suitors{candidates(j)});
+                            
+                        end
+                        %end ID, correct,  scores( s1, c1 c2),size1 size2, gap size
+                        %top1, top2
+                        top1=length(esequence{t}.sucessor_suitors{i})*ones(size(splitscores,1),1);
                         
-                        %tests in sense of being part of real lineage
-                        %(returns true for half of a division)
-                        nondiv_choices_correct(j)=...
-                            (canswer_suc(1)==candidates(j)&&...
-                            canswer_suc_time(1)==candidates_t(j))|...
-                            (canswer_suc(2)==candidates(j)&&...
-                            canswer_suc_time(2)==candidates_t(j));
-                        top2(j)=length(esequence{candidates_t(j)}.predecessor_suitors{candidates(j)});
-                        
-                    end
-                    %end ID, correct,  scores( s1, c1 c2),size1 size2, gap size
-                    %top1, top2
-                    top1=length(esequence{t}.sucessor_suitors{i})*ones(size(splitscores,1),1);
-                    
-                    if(~isempty(splitscores))
-                        alldatanondiv=[alldatanondiv;ones(size(splitscores,1),1)*nodes,nondiv_choices_correct,splitscores,endlength*ones(size(splitscores,1),1),candidates_lengths,candidates_t-t,top1,top2,nondivscorecomponents];
+                        if(~isempty(splitscores))
+                            alldatanondiv=[alldatanondiv;ones(size(splitscores,1),1)*nodes,nondiv_choices_correct,splitscores,endlength*ones(size(splitscores,1),1),candidates_lengths,candidates_t-t,top1,top2,nondivscorecomponents];
+                        end
                     end
                 else
                     %because of repeated large concatenation this is a very
@@ -215,7 +217,7 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
             %data on all candidate scorings
             
             if(~isempty(divcandidates)&trackingparameters.recordanswers)
-                
+              if isfield(esequence{t},'correct_suc')  
                 dtop=[];
                 for cand=1:size(divcandidates,1)
                     dtop=[dtop;endtop,length(esequence{divcandidates_t(cand,1)}.predecessor_suitors{divcandidates(cand,1)}),length(esequence{divcandidates_t(cand,2)}.predecessor_suitors{divcandidates(cand,2)})];
@@ -237,7 +239,7 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
                 
                 %end ID, sucessor exists, correct, scores( agreement s1 s2, c1 c2 c3),size1 size2 size3 gap size
                 alldatadiv=[alldatadiv;ones(size(divtypes))*nodes,divtypes,div_choices_correct,splitscores_div,divisionlengths,divcandidates_t-t,dtop];
-                
+              end 
             end
             
             %take min
@@ -245,6 +247,7 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
             [minscore_nondiv,imin]=min(scores_nondiv);
             
             if (trackingparameters.recordanswers)
+                if isfield(esequence{t},'correct_suc')
                 %answer info
                 %anwer from cannonical answer
                 canswer_suc=esequence{t}.correct_suc(i,:);
@@ -290,7 +293,7 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
                     end
                     
                 end
-                
+                end
                 
             end %end if should record answers
             
@@ -352,6 +355,11 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
                     end
                     
                     %anwswer stuff
+                    %for now remming this out it was only used in mass
+                    %tracking parameter tuning which hasnt been done in
+                    %ages and is giving problems now because running with
+                    %partial answer key
+                    %{
                     if(div)
                         canswer=[divcandidates(divimin,1:2),divcandidates_t(divimin,1:2)];
                         sucFN=min(esequence{divcandidates_t(divimin,1)}.correct_suc(divcandidates(divimin,1),1),...
@@ -364,6 +372,7 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
                     end
                     answers=[answers;...
                         minscore_divs,minscore_nondivs,divanswerright,nondivanswerright,answerpresent,canswer_suc,canswer_suc_time,i,t,sucFN,correctscore,canswer];
+ %}              
                 end
                 
                 if(trackingparameters.dotrack) %actually do tracking instead of gathering case info

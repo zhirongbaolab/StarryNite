@@ -82,7 +82,13 @@ if(trackingparameters.deleteisolated)
                         esequence{t}.delete(i)=1;
                         numcells=length(esequence{t}.finaldiams);
                         if (trackingparameters.recordanswers)
-                            removedi=[removedi;1,esequence{t}.confidences(i),esequence{t}.FP(i),numcells];
+%                            removedi=[removedi;1,esequence{t}.confidences(i),esequence{t}.FP(i),numcells];
+                                %note the old .fp field no longer seems toe
+                                %xhist and this code hasnt been used just
+                                %modifying to let it run
+                                if isfield(esequence{t},'FP')
+                              removedi=[removedi;1,esequence{t}.confidences(i),esequence{t}.FP(i),numcells];
+                                end
                         end
                     end
                 end

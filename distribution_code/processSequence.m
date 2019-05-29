@@ -58,8 +58,9 @@ for example=1:length(tlist)
     embryodir=imageLocation(1:seplocation);
     embryonumber=imageLocation(seplocation+1:endprefixlocation-1);
     
-    %note matlab stack is no longer supported by new gui but keeping this
-    %here which will keep this code back compatible with old gui should it
+    %note matlab stack is no longer explicit in new gui but mode will be tripped if 
+    %selected file has .mat extension (old keller data)
+    %and will keep this code back compatible with old gui should it
     %be needed
     if (MATLAB_STACK)   
         load([embryodir,embryonumber,time_prefix,num2str(time,'%04d'),'.mat']);
@@ -162,41 +163,45 @@ for example=1:length(tlist)
             end
     
             
-    if(rednuclei)
-        expind=2;
-    else
-        expind=1;
-    end
-    
-    %output slices before subsampling via ROI
-    if(outputSlice)
-        
-        minval=approximateMatrixPercentile(X,outputSlice_linptilem,round((2^16)/10));
-        maxval=approximateMatrixPercentile(X,outputSlice_linptile,round((2^16)/10));
-        
-        %red mapping is calculated on the first volume and uniform
-        %afterward to allow quantitation of as opposed to nuclear channel
-        %mapped per volume to maximize visibility in the 8bit images
-        if(exist('Xr')&&tlist(example)==firsttimestep)
-            Xrfinal=im2double(((loadCellStackMetamorph([embryodir,embryonumber],tlist(length(tlist)),expind,slices,[0,0,0,0],zeropadding))));
-            
-            %minvalr=prctile(reshape(Xrfinal,[1,numel(Xrfinal)]),outputSlice_expptilem);
-            %maxvalr=prctile(reshape(Xrfinal,[1,numel(Xrfinal)]),outputSlice_expptile);
-            minvalr=approximateMatrixPercentile(Xrfinal,outputSlice_expptilem,round((2^16)/10));
-            maxvalr=approximateMatrixPercentile(Xrfinal,outputSlice_expptile,round((2^16)/10));
             
             
-            clear Xrfinal;
-        end
-           outputAceTreeSlice(X,embryodir, embryonumber,time,minval,maxval,1,false);
-      
-        if (exist('Xr'))
-            outputAceTreeSlice(Xr,embryodir, embryonumber,time,minvalr,maxvalr,1,true);         
-        end
-    end
-    
-    %clear Xr;
-    
+            %output slices before subsampling via ROI
+            if(outputSlice)
+                minval=approximateMatrixPercentile(X,outputSlice_linptilem,round((2^16)/10));
+                maxval=approximateMatrixPercentile(X,outputSlice_linptile,round((2^16)/10));
+                
+        if(exist('splitstack','var')&&splitstack)
+                    if(rednuclei)
+                        expind=2;
+                    else
+                        expind=1;
+                    end
+                    
+                    
+                    %red mapping is calculated on the first volume and uniform
+                    %afterward to allow quantitation of as opposed to nuclear channel
+                    %mapped per volume to maximize visibility in the 8bit images
+                    if(exist('Xr')&&tlist(example)==firsttimestep)
+                        Xrfinal=im2double(((loadCellStackMetamorph([embryodir,embryonumber],tlist(length(tlist)),expind,slices,[0,0,0,0],zeropadding))));
+                        
+                        %minvalr=prctile(reshape(Xrfinal,[1,numel(Xrfinal)]),outputSlice_expptilem);
+                        %maxvalr=prctile(reshape(Xrfinal,[1,numel(Xrfinal)]),outputSlice_expptile);
+                        minvalr=approximateMatrixPercentile(Xrfinal,outputSlice_expptilem,round((2^16)/10));
+                        maxvalr=approximateMatrixPercentile(Xrfinal,outputSlice_expptile,round((2^16)/10));
+                        
+                        
+                        clear Xrfinal;
+                    end
+                end
+                outputAceTreeSlice(X,embryodir, embryonumber,time,minval,maxval,1,false);
+                
+                if (exist('Xr'))
+                    outputAceTreeSlice(Xr,embryodir, embryonumber,time,minvalr,maxvalr,1,true);
+                end
+            end
+            
+            %clear Xr;
+            
     if(ROI)
         X=X(ROIymin:ROIymax,ROIxmin:ROIxmax,:);
         if(exist('Xr'))
@@ -418,6 +423,8 @@ end
     else
        name=[embryonumber,'_',suffix];
     end
+    %{
+    %this is obsolete saving of positions for tracking by old C StarryNite
 if (SNoutput)    
     if(ROI)
         outputSNFiles(embryodir,name,esequence,min(tlist),max(tlist),downsample,ROIxmin,ROIymin);
@@ -427,4 +434,5 @@ if (SNoutput)
     end
 
 end
+    %}
 

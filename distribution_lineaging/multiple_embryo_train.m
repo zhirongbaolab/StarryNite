@@ -2,7 +2,11 @@ lowdim=false; %whether to create full covariance model or independent model for 
 
 %do all embryo model training for bifurcation model
 
-
+if(replacemodel)
+    
+    %these dont exist if original model was run without classifier (or
+    %maybe because there are no valid divisions) so putting in replace if
+    %kind of a hack
 Divdata=[];
 NoDivdata=[];
 Tripledata=[];
@@ -38,7 +42,7 @@ div_triple_mean=mean(Tripledata);
 
 
 
-if(replacemodel)
+
     
     trackingparameters.model.div_mean=div_mean;
     trackingparameters.model.div_std=div_std;

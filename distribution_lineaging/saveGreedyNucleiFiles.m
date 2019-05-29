@@ -1,6 +1,5 @@
 %save greedy lineaging result in esequence data structure in  acetree readable format.
 function saveGreedyNucleiFiles(esequence,time,directory,anisotropy,ROIxmin,ROIymin)
-set(0,'RecursionLimit',max(500,time*2));%if need more set recursion higher
 if(~exist('ROIxmin','var'))
     ROIxmin=1;
     ROIymin=1;

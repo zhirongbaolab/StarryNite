@@ -457,8 +457,10 @@ if trackingparameters.recordanswers
         FNbackcand1,FNbackcand2,branchendFNoption1,branchendFNoption2,FNbackcand1lengths,FNbackcand2lengths,...
         bestFNBackScore,bestFNBackLength,bestFNForwardScoreD1,bestFNForwardScoreD2,...
         bestFNForwardLengthD1,bestFNForwardLengthD2, bestFNBackCorrect,FNbackmutual];
+
 end
 
+  
 count=count+1;
 %coallate data for indivdual classifications
 minsize=min(d1length,d2length);

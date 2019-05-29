@@ -1,7 +1,6 @@
 %train division nondivision model
 %match esequence contents agains corrected data
 %and collect vector results
-filternames=false %whether or not to filter out nuc named nuclei 
 lowdim=false;%true %independent feature model instead of full cov
 loosematch=false; %whether to use .5d or 2d a feature that isnt actualy necessary
 %also cache matches and translated successor indicies in 
@@ -44,7 +43,7 @@ realnuclei=0;
 Divdata=[];
 NoDivdata=[];
 Tripledata=[];
-for time=starttime:endtime
+for time=starttime:endtime %note was -1 before
     
     
      distances=distance_anisotropic(esequence{time}.finalpoints',esequence{time}.finalpoints',trackingparameters.anisotropyvector);

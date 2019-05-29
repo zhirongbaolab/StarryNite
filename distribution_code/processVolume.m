@@ -9,7 +9,7 @@ if (nodatause||nodata)
 
     if(isstruct(previous)&~usestaticdiameter)
         if(~isempty(previous.diams)&&length(previous.diams)>10) %update only if found cells last time otherwise dont do anything
-            celldiameter=mean(previous.diams);%max(mean(previous.diams),celldiameter*.9);%limit to drop of 10% per TP
+            celldiameter=median(previous.diams);%max(mean(previous.diams),celldiameter*.9);%limit to drop of 10% per TP
         end
     else
         celldiameter=firsttimestepdiam*downsample;

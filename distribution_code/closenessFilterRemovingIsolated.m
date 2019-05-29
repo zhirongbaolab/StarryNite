@@ -8,7 +8,8 @@ valid=zeros(size(values));
 
 sizes=size(points);
 %filtpoints=[];
-distances=distance_mem(scaledpoints',scaledpoints'); 
+%distances=distance_mem(scaledpoints',scaledpoints'); 
+distances=distance(scaledpoints',scaledpoints'); 
 
 for i=1:sizes(1)
    I=find(distances(i,:)<threshold);
