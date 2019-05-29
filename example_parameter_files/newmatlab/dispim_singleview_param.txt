@@ -1,0 +1,193 @@
+%core imaging parameters
+xyres=.1625;
+zres=.65;    
+slices=296;%if fewer slices than this exist it defaults to full stack size
+firsttimestepdiam=40;
+firsttimestepnumcells=2;%guess at cell stage at first timepoint (used just to select initial parameter stage)
+
+time_prefix='';%separator between core filename and timepoint number
+
+
+%Segmentation parameter settings
+parameters.sigma=1;
+
+% # of cell transition points for parameters
+parameters.staging=[25,80,181,251,351,500];
+
+%merged single volume settings
+parameters.intensitythreshold=[40,60,67,70,70,70,70]./4.25;%4%3.5%slight underseg in current 2/15/2018;%./20;%4.5;%was 4.5 for general mipav his ar dimmer
+parameters.rangethreshold=[100,80,14,10,6,6,7,10];
+parameters.nndist_merge=[.8,.6,.6,.5,.4,.45,.45,.45];
+parameters.mergelower=[-300,-200,-100,-35,-15,-20,-20,-20];
+parameters.armerge=[1.6,2,1.6,1.3,1.1,1,1,1];
+parameters.mergesplit=[1,1,.5,.5,.3,.8,.8,.8];
+parameters.split=[100,100,20,19,17,3.5,3.5,3.5];
+parameters.selection_dist=.5;
+parameters.boundary_percent=.5;%.525%slight under expansion in current yale dispim2/15/2018; %.5 (v3) also seemed result in expansion .55(v2) seemed to result in good xy but massive overseg
+
+%internal parameters
+conservememory=true;
+
+
+%training version
+nodata=true;%match online against canned data
+nucleidir='G:\My Documents\latetest\';
+embryonumber_ed='journalV_s1_edit';
+
+% in/out disk distribution location
+distribution_file='clean_distributions_newimage.mat';
+distribution_file2=distribution_file;
+zeropadding=false; %if zero padding in numbers in filename
+savedata=true;
+
+
+%imaging configuration
+parameters.large_ray_threshold=1.5;
+parameters.small_ray_threshold=1/3;
+parameters.GRADIENT_THRESH=false;
+downsampling=1;    
+SIMPLETIFF=false
+MATLAB_STACK=true; 
+newscope=false; %loading of metamorph combined 2 channel tiff
+SNoutput=true; %output nuclei and diameter files
+outputSlice=true; %output acetree slices of image
+
+ 
+
+
+
+%TRACKING PARAMETERS
+%GENERAL IMAGING PARAMS
+load '2019TrackingModelv2.mat';
+
+% force classifier to pick an option if available and not leave things unlinked
+trackingparameters.useforce=true;
+trackingparameters.forceendtime=110;
+
+%start time for analysis
+trackingparameters.starttime=1;
+
+% Whether to force all tentative bifurcations and perform bifurcation
+% resolution
+%if true it creates bifurcations up to trackingparameters.maxdivscore
+%(defined below) and returns result as final lineage. If false then creates
+% all possible bifurcations and runs tentative bifurcation resolution 
+skipbifurcation=false;
+
+% time interval (in minutes) between imageframes
+trackingparameters.interval=1;
+
+% whether to use the average of segmented z planes as cell centroid or the
+% location of the 3D intensity maxima
+% maxima appears to be more reliable in our data
+trackingparameters.useAveragePoint=false;
+
+%EASY STAGE
+%max multiple of avg nn distance for timestep used as max sanity check on match distance
+trackingparameters.candidateCutoff=1.2;
+
+%UNLIKELY TO CHANGE
+%safe filter easy cases
+trackingparameters.safefilter=true;
+trackingparameters.safefactor=2; %2 = normal safe, can be more conservative
+%filter out cases with a conflicting claim
+trackingparameters.conflictfilter=true;
+%candidate selection
+% # of back nn compiled into candidate list used in div and noneasy 1-1
+trackingparameters.nnnumber=2;
+%filter 2 nn back candidates based on nn forward ranking
+%prevent more than n forward nn to be on candidate list
+trackingparameters.forwardnnnumber=4; 
+
+%TENTATIVE BIFURCATION CREATION
+
+%current non div cost function (normalized distance)
+trackingparameters.nonDivCostFunction=@distanceCostFunction;%
+%trackingparameters.nonDivCostFunction=@nondivScoreModelCostFunction;%
+%start and end distances (in avg nn units) of optimization of distance for
+%noneasy 1-1 cases
+trackingparameters.minnondivscore=.125;% 
+trackingparameters.nondivscorestep=.125;
+trackingparameters.maxnondivscore=.875;
+
+%likely ranges for if using 1:1 liklihood score instead of distance
+%trackingparameters.minnondivscore=-20;
+%trackingparameters.nondivscorestep=1;
+%trackingparameters.maxnondivscore=45;
+
+%cost function used for division scoring/ feeding into bifurcaton model
+trackingparameters.DivCostFunction=@divScoreModelCostFunction;
+%threshold and increment for sliding threshold optimization of divisions
+%log product of pdf score for division models
+trackingparameters.mindivscore=-20;
+trackingparameters.divscorestep=2;
+trackingparameters.maxdivscore=5;
+
+
+%parameters for deleting fragments so isolated they cannot form bifurcations
+trackingparameters.deleteisolated=true; %whether to do any deletion of isolated points
+%delete if
+%smaller than thresh
+trackingparameters.FPsizethresh=2;
+%and less than # of cells
+trackingparameters.earlythresh=250;
+%or if smaller than or = to second thresh
+trackingparameters.FPsizethreshsmall=1;
+%note that these are currently redundant with eachother
+%and with third non parameterized check that discards anything isolated of length 1
+%but might be useful to be able to set them independently higher in some
+%situations
+
+%TENATATIVE BIFURCATION RESOLUTION
+%above this size things are considered unlikely to be FP so their FN forward gap properties are not %taken into account when judging them
+trackingparameters.smallcutoff=4; 
+%max temporal gap that can be closed during bifurcation processing stage
+trackingparameters.temporalcutoff=6;
+
+%starting negative cutoff for FN search (2=FN only, 1=FN or calssifier 1:1)
+%though it can be changed anytime only makes sense to use it in the same
+%mode the model has been trained in
+trackingparameters.temporalcutoffstart=2;
+%note trackingparameters.candidateCutoff is used in this processing step also
+
+%final confidence calculation
+%temporal size of wider window in estimating properties for temporal neighborhood
+%around link
+trackingparameters.wideWindow=4;
+
+  
+
+
+
+
+
+newscope=false;
+
+MATLAB_STACK=false;
+
+SIMPLETIFF=true;
+
+%Parameter overwrites generated by ROI interface:
+
+rednuclei=true;
+
+LSM_channel=2;
+
+start_time=1;
+
+end_time=327;
+
+outputSlice=true;
+
+ROI=true;
+
+ROIxmin=14;
+
+ROIxmax=376;
+
+ROIymin=10;
+
+ROIymax=213;
+
+ROIpoints=[161 14 ; 252 10 ; 345 25 ; 376 58 ; 375 98 ; 362 158 ; 322 179 ; 272 203 ; 196 208 ; 94 213 ; 41 208 ; 27 167 ; 14 121 ; 26 71 ; 86 35 ; ];
+

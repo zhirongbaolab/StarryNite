@@ -45,7 +45,10 @@ if nargin == 1
 if (length(name) < 3)
     error('file name too short, could not extract the time point in which the file was taken')
 end
-t = str2double(name(2:4));
+ind = strfind(name,'-');
+t = str2double(name(2:(ind-1)));
+
+%t = str2double(name(2:4));
 T = t*ones(length(C{1}),1);
 
 %getting direct successors

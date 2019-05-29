@@ -1,0 +1,1 @@
+two sets of example parameter files are provided, they differ only in whether they point to the saved .mat classifier model that goes to the old naive bayes classifier or the new one. Both models are included in distribution_lineaging.

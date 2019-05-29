@@ -22,15 +22,16 @@ end
 %build a list of all claimants to a nuclesu as predecessor based on nn of
 %score
 for t=trackingparameters.endtime:-1:trackingparameters.starttime+1
-    if(~(isempty(esequence{t-1}.finalpoints)|isempty(esequence{t}.finalpoints)))
+    if(~(isempty(esequence{t-1}.finalpoints)||isempty(esequence{t}.finalpoints)))
     distances=distance_anisotropic(esequence{t-1}.finalpoints',esequence{t}.finalpoints',trackingparameters.anisotropyvector);
     
     %esequence{t-1}.forwardDistances=distances; %save this computation for later test 3/4/2019
-    
+    %this was in the loop for no good reason
+    candidates=linspace(1,size(esequence{t-1}.finalpoints,1),size(esequence{t-1}.finalpoints,1));
+  
     for i=1:size(esequence{t}.finalpoints,1)
         
-        candidates=linspace(1,size(esequence{t-1}.finalpoints,1),size(esequence{t-1}.finalpoints,1));
-    %    candidates_t=t-1*ones(size(candidates));
+     %    candidates_t=t-1*ones(size(candidates));
         
         
         %score cases via stored function handle
@@ -60,14 +61,15 @@ end
 
 %build same list in opposite direction
 for t=trackingparameters.starttime:trackingparameters.endtime-1
-   if(~(isempty(esequence{t}.finalpoints)|isempty(esequence{t+1}.finalpoints)))
+   if(~(isempty(esequence{t}.finalpoints)||isempty(esequence{t+1}.finalpoints)))
   
     distances=distance_anisotropic(esequence{t}.finalpoints',esequence{t+1}.finalpoints',trackingparameters.anisotropyvector);
-
+    %this was in the loop for no good reason too  
+    candidates=linspace(1,size(esequence{t+1}.finalpoints,1),size(esequence{t+1}.finalpoints,1));
+    %candidates_t=t+1*ones(size(candidates));
     for i=1:size(esequence{t}.finalpoints,1)
        % candidates=esequence{t}.forwardcandidates{i};
-         candidates=linspace(1,size(esequence{t+1}.finalpoints,1),size(esequence{t+1}.finalpoints,1));
-      candidates_t=t+1*ones(size(candidates));
+       
          %score cases via stored function handle
         %scores=[];
         %splitscores=[];
@@ -93,15 +95,13 @@ end
 for t=trackingparameters.starttime:trackingparameters.endtime-1
     for i=1:size(esequence{t}.finalpoints,1)
         target=[];
-        
-        
         mutual=false;
         for k=1:length(esequence{t}.sucessor_suitors{i})
             for l=1:length(esequence{t+1}.predecessor_suitors{esequence{t}.sucessor_suitors{i}(k)})
             if(esequence{t+1}.predecessor_suitors{esequence{t}.sucessor_suitors{i}(k)}(l)==i)
                 mutual=true;
                 tcand=k;
-                fcand=l;
+               % fcand=l;
             end
             end
         end
@@ -181,10 +181,11 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
   %}              
                 
                 if( trackingparameters.recordanswers)
+                    if isfield(esequence{t},'correct_suc_time')
                     %answer calculation
                     canswer_suc=esequence{t}.correct_suc(i,:);%the true successors to chosen predecessor
                     canswer_suc_time=esequence{t}.correct_suc_time(i,:);%time
-                    answerpresent=0;
+                    %answerpresent=0;
                     correct=0;
                     if(~isempty(target))
                         correct=((canswer_suc(1)==target&&canswer_suc_time(1)==t+1)||(canswer_suc(2)==target&&canswer_suc_time(2)==t+1));
@@ -197,8 +198,12 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
                     %splitscore, fp start, fp end, fn end
                     if(isempty(targetscore))
                         'why would this happen?'
-                        answers_1=[answers_1;-1,-1,correct,trackingparameters.nondivscorethreshold(t),-1,-1,esequence{t}.correct_suc(i,:),...
+                      %  answers_1=[answers_1;-1,-1,correct,trackingparameters.nondivscorethreshold(t),-1,-1,esequence{t}.correct_suc(i,:),...
+                      %      t,i,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+                        
+                        answers_1=[answers_1;-1,-1,correct,trackingparameters.endscorethresh_nondiv,-1,-1,esequence{t}.correct_suc(i,:),...
                             t,i,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+                      
                         %    answers_1=[answers_1;-1,-1,correct,trackingparameters.nondivscorethreshold(t),-1,-1,esequence{t}.correct_suc(i,:),...
                         %      t,i,-1,-1,-1,-1,-1];
                     else
@@ -206,14 +211,19 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
                         % if(isempty(secondscore))
                         %     secondscore=-1;
                         % end
-                        answers_1=[answers_1;canswer_suc_time(1)==t+1|canswer_suc_time(2)==t+1,targetscore,correct,trackingparameters.nondivscorethreshold(t),...
-                            canswer_suc,esequence{t}.correct_suc(i,:),t,i,target,-1,mdistance,safedistance,splitscore,esequence{t}.FP(i),esequence{t+1}.FP(target),esequence{t+1}.correct_pred_time(target)>0&&esequence{t+1}.correct_pred_time(target)~=t];
+                        %         answers_1=[answers_1;canswer_suc_time(1)==t+1|canswer_suc_time(2)==t+1,targetscore,correct,trackingparameters.nondivscorethreshold(t),...
+                        %             canswer_suc,esequence{t}.correct_suc(i,:),t,i,target,-1,mdistance,safedistance,splitscore,esequence{t}.FP(i),esequence{t+1}.FP(target),esequence{t+1}.correct_pred_time(target)>0&&esequence{t+1}.correct_pred_time(target)~=t];
+                        if(isfield(esequence{t+1},'FP'))
+                            answers_1=[answers_1;canswer_suc_time(1)==t+1|canswer_suc_time(2)==t+1,targetscore,correct,trackingparameters.endscorethresh_nondiv,...
+                                canswer_suc,esequence{t}.correct_suc(i,:),t,i,target,-1,mdistance,safedistance,splitscore,esequence{t}.FP(i),esequence{t+1}.FP(target),esequence{t+1}.correct_pred_time(target)>0&&esequence{t+1}.correct_pred_time(target)~=t];
+                        end
+                    end
                     end
                 end
                 
             end
         end
-  
+        
         
         
     end

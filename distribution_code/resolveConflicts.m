@@ -53,7 +53,9 @@ if(~isempty(mergeinfo2a))
     goodmerges=goodmerges|(mergeinfo2a(:,4)>mergeinfo2a(:,3)*mergesplit);%classic merge split rule
    
     spoints=[allpoints(:,1),allpoints(:,2),allpoints(:,3)*anisotropy];
-    distancevals=distance_mem(spoints',spoints');
+    %distancevals=distance_mem(spoints',spoints');
+    distancevals=distance(spoints',spoints');
+   
     distancevals=distancevals./celldiameter; %norm by expected diam
     
     onndist=zeros(s(1),1);
