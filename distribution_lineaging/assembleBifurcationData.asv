@@ -260,7 +260,7 @@ else
         end
         %compute recursive solidity of smaller branch of best
         %candidate pair
-        [~,~,flengthd1, solidlengthd1]=computeConfidenceRecursive(esequence,d1endcandt(minid1),d1endcand(minid1),trackingparameters);
+        [convectord1,consumd1,flengthd1, solidlengthd1]=computeConfidenceRecursive(esequence,d1endcandt(minid1),d1endcand(minid1),trackingparameters);
         
     else %option not originating in division
         
@@ -491,9 +491,7 @@ end
 
 ncells=mean(esequence{t}.selfdistance)./mean(esequence{t}.finaldiams);
 
-%alldaughterdata=[BifurcationMeasures(count-1,:),confidenceData.bifconvector(count-1,:),minsize,ncells];
-alldaughterdata=[features,confidenceData.bifconvector(count-1,:),minsize,ncells];
-
+alldaughterdata=[BifurcationMeasures(count-1,:),confidenceData.bifconvector(count-1,:),minsize,ncells];
 allforwarddata=[minbranchforwardgapsize,minsizedaughterbestscore',minsizedaughterbestscorelength',minbranchforwardconv,minbranchforwardxy,minbranchforwardz,minbranchforward_solidlength,minbranchforward_timelength];
 allbackdata=[splitFNMatchScore.backgapsize(count-1,1),bestFNBackScore,bestFNBackLength,confidenceData.bestbackconv(count-1,:),splitFNMatchScore.backxy(count-1,:),splitFNMatchScore.backz(count-1)];
 end

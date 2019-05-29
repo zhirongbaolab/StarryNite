@@ -1,6 +1,9 @@
 # StarryNite
 StarryNite is the current Matlab version of the StarryNite cell lineaging package, built initially for C. elegans but applied to a number of models.
 
+To run StarryNite from source add the parent directory of the 3 source directories to the matlab path and run lineage_launcher_v2 ideally with distribution_lineaging as the working directory, this ensures that required .mat model files and jars for secondary tasks will be found.
+If running from a compiled lineage_launcher_v2 the jars and .mat files in lineage launcher should be alongside the compiled executable. 
+
 Code overview below:
 
 Cell Detection

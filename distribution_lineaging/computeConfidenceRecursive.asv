@@ -25,40 +25,34 @@ solidlength=solidlength+1/trackingparameters.interval;
 %compute best match forward and recursively compute forward solidity on it
 
 flength=(t-torig+1)/trackingparameters.interval;
+[reversecand,reversecandt] =findForwardCandidatesTime(esequence,i,t,trackingparameters);
 consum=1;
-
 %I added a check to minimize recursion which I think is the problem in
 %longer periods and why tracking is taking way longer per frame  over
-%longer time periods once you hit this length, it has little diagnostic
-%value
-if(solidlength>=10)
+%longer time periods
+if(isempty(reversecand)||solidlength>=15)
     
     return
 else
     
-    [reversecand,reversecandt] =findForwardCandidatesTime(esequence,i,t,trackingparameters);
-    if(isempty(reversecand))
-        return
-    else
-        [scores_forwardfromback,~,~,~]=...
-            gapScore(esequence,i,t,reversecand,reversecandt,trackingparameters);
-        [~,minirf]=min(scores_forwardfromback);
-        
-        
-        [convectorf,consumf,flengthf, solidlengthf]=...
-            computeConfidenceRecursive(esequence,reversecandt(minirf),reversecand(minirf),trackingparameters);
-        
-        
-        %end
-        
-        
-        %compute min size of conflict leading to best candidate and follow that
-        %set t, i to min daughter or best score
-        convector=[convector;convectorf];
-        consum=consumf+consum;
-        flength=flength+flengthf+(reversecandt(minirf)-t)/trackingparameters.interval;
-        solidlength=solidlength+solidlengthf;
-    end
+    [scores_forwardfromback,~,~,~]=...
+        gapScore(esequence,i,t,reversecand,reversecandt,trackingparameters);
+    [~,minirf]=min(scores_forwardfromback);
+    
+    
+    [convectorf,consumf,flengthf, solidlengthf]=...
+        computeConfidenceRecursive(esequence,reversecandt(minirf),reversecand(minirf),trackingparameters);
+    
+    
+    %end
+    
+    
+    %compute min size of conflict leading to best candidate and follow that
+    %set t, i to min daughter or best score
+    convector=[convector;convectorf];
+    consum=consumf+consum;
+    flength=flength+flengthf+(reversecandt(minirf)-t)/trackingparameters.interval;
+    solidlength=solidlength+solidlengthf;
 end
 
 

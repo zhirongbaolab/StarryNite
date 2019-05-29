@@ -27,7 +27,7 @@ parfor i=1:length(tempcenterindicies)
     centerval=tempcenteredxymax(tempcenterindicies(i),:);
     maximaval=tempxymaximavals(tempcenterindicies(i),:);
     resultval=assign_planes(centerval,diam,volsize,tempcenteredxymax,anisotropy);
-    logodds{i}=calculateLogodds(resultval,centerval,maximaval,diam,tempxymaximavals,tempxydetdiameters,anisotropy,tempxycoverage);
+    logodds{i}=calculateLogodds(resultval,tempcenteredxymax(tempcenterindicies(i),:),maximaval,diam,tempxymaximavals,tempxydetdiameters,anisotropy,tempxycoverage);
     centers{i}=resultval;
 end
 %parfor doesnt like parameter lookup function
@@ -75,7 +75,7 @@ logodds3=cell(length(unclaimeddiams),1);
 range3=cell(length(unclaimeddiams),1);
 
 for i=1:length(unclaimeddiams) 
- centers3{i}=assign_planes(unclaimedcentered3(i,:),unclaimeddiams(i),volsize,diskSet.centeredxymax,anisotropy);
+ centers3{i}=assign_planes(unclaimedcentered3(i,:),unclaimeddiams(i),X,diskSet.centeredxymax,anisotropy);
  logodds3{i}=calculateLogodds(centers3{i},unclaimedcentered3(i,:),unclaimedmaximavals(i),unclaimeddiams(i),diskSet.xymaximavals,diskSet.xydetdiameters,anisotropy,diskSet.xycoverage);
  range3{i}=vcalculateMaximalRange(centers3{i},unclaimedcentered3(i,:),logodds3{i},diskSet.xycoverage,numcells);
 end

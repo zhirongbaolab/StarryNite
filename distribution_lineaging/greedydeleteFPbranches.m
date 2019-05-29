@@ -4,17 +4,21 @@ function esequence=greedydeleteFPbranches(esequence,trackingparameters)
 % judge each bifuration and based on judgment of its origin (unknown, fn,
 % fp, division) modify linkage of tree around bifurcation
 
-global removed;%store answer for post tunign
+%historically vectors of cases were saved in globals for parameter tuning,
+%some of these remain in code and some don't not sure of why historically
+%anymore, probably all should come out and cases be passed as parameter if
+%needed for future tuning
+%global removed;%store answer for post tunign
 global FNtype;
-global simpleFNcorrect;
+%global simpleFNcorrect;
 global removedi;
-global BifurcationMeasures;
-global candidateInfo;
-global bestCandidateInfo;
-global endIndicies;
-global bestEndCandidateInfo;
-global confidenceData;
-global splitFNMatchScore;
+%global BifurcationMeasures;
+%global candidateInfo;
+%global bestCandidateInfo;
+%global endIndicies;
+%global bestEndCandidateInfo;
+%global confidenceData;
+%global splitFNMatchScore;
 global classround;
 count=1;
 %first pass removing truly isolated points which are left dangling because
@@ -91,8 +95,8 @@ end%end check whether to delete isolated
 %gather data
 %classify
 %take appropriate action
-dFNf=0;
-dFNb=0;
+%dFNf=0;
+%dFNb=0;
 for t=trackingparameters.starttime:trackingparameters.endtime-1
     
     %control logic for whether to force bifurcations to do soemthing used
@@ -105,7 +109,7 @@ for t=trackingparameters.starttime:trackingparameters.endtime-1
     
     for i=1:size(esequence{t}.finalpoints,1)
         %if this is a division
-        if(esequence{t}.suc(i,2)~=-1&~esequence{t}.delete(i))
+        if(esequence{t}.suc(i,2)~=-1&&~esequence{t}.delete(i))
             
             %assemble data about bifurcation
             [d1cand,d2cand,d1candt,d2candt,d1length,d2length,...

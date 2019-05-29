@@ -3,30 +3,33 @@ integratedGFP=zeros(length(dataset.merged_sliceindicies),1);
 area=zeros(length(dataset.merged_sliceindicies),1);
 maxslice=zeros(length(dataset.merged_sliceindicies),1);
 diskmax=zeros(length(dataset.merged_sliceindicies),1);
- for n=1:length(dataset.merged_sliceindicies)  
-   
-            slices=dataset.merged_sliceindicies{n};
-%            filterslice=true;
+for n=1:length(dataset.merged_sliceindicies)
+    
+    slices=dataset.merged_sliceindicies{n};
+    %            filterslice=true;
+    
+    %           if(filterslice)
+    
+    maxvalue=max(dataset.diskintensity(slices));
+    slices=slices(dataset.diskintensity(slices)>=maxvalue*parameters.boundary_percent);
+    maxslice(n)=maxvalue;
+    %          end
+    % diskmax(n)=prctile(dataset.diskMax(slices),75);
+    for s=1:length(slices)
+        area(n)=area(n)+dataset.diskArea(slices(s));
+        integratedGFP(n)=integratedGFP(n)+dataset.diskGFPsums(slices(s));
+        
+        %safety wrapper for old saved mat files where this
+        %value was not computed this is only for training on old training
+        %data
+        %if exist('dataset.diskMax','var')
             
- %           if(filterslice)
-            
-                maxvalue=max(dataset.diskintensity(slices));
-                slices=slices(dataset.diskintensity(slices)>=maxvalue*parameters.boundary_percent);
-                maxslice(n)=maxvalue;
-                %          end
-           % diskmax(n)=prctile(dataset.diskMax(slices),75);
-            for s=1:length(slices)
-                 area(n)=area(n)+dataset.diskArea(slices(s));
-                integratedGFP(n)=integratedGFP(n)+dataset.diskGFPsums(slices(s));
-                    %safety wrapper for old saved mat files where this
-                    %value was not computed
-                if exist('dataset.diskMax','var')
-                    diskmax(n)=max(diskmax(n),dataset.diskMax(slices(s)));
-                end
-            end  
-
+            diskmax(n)=max(diskmax(n),dataset.diskMax(slices(s)));
+       % end
+    end
+    
 end
-   
-       
+
+
 
         

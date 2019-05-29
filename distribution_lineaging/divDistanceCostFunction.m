@@ -21,5 +21,6 @@ for j=1:size(candidates,1)
 end
 confidences=scores;
 splitscores=[scores,scores,scores,scores,scores,scores];%dummy
+features=scores;
 end
 
