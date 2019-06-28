@@ -2,7 +2,13 @@
 StarryNite is the current Matlab version of the StarryNite cell lineaging package, built initially for C. elegans but applied to a number of models.
 
 To run StarryNite from source add the parent directory of the 3 source directories to the matlab path and run lineage_launcher_v2 ideally with distribution_lineaging as the working directory, this ensures that required .mat model files and jars for secondary tasks will be found.
-If running from a compiled lineage_launcher_v2 the jars and .mat files in lineage launcher should be alongside the compiled executable. 
+If running from a compiled lineage_launcher_v2 the jars and .mat data files in distribution_lineaging should be alongside the compiled executable StarryNite.exe. 
+
+Documentation contains specifications for auxinfo(embryo orientation file) format and an end user manual.
+
+Example parameter files for all microscopes/standard aquisition settings in the Bao lab are in example parameter files versions in newmatlab and oldmatlab reference different bayesian classifiers types Matlab 2014b- supports only old, 2017a+ only new, not sure what status inbetween is. Parameter files with same name are otherwise identical.
+
+Current .exe binary was compiled with 2014b.
 
 Code overview below:
 

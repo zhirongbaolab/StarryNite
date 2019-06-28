@@ -17,13 +17,13 @@
 %are the position and size of nuclei.
 %output int outputdir is a zip file contaning lineaged results
 
-function detect_track_driver_allmatlab(parameterfile,imageLocation,suffix,outputdirectory,polygon_points,isred);%,lineageParameterFileName)
+function detect_track_driver_allmatlab_v2(parameterfile,imageLocation,suffix,outputdirectory,polygon_points,isred);%,lineageParameterFileName)
 runexpression=true;
 newimage=false;
 
 'beginning lineaging'
 %cant profile compiled code
-if (exist('profile','builtin'))
+if (exist('profile'))
 profile clear
 profile on
 end
@@ -71,6 +71,7 @@ esequence={};
 processSequence;
 
 'detection completed, beginning lineaging'
+set(0,'RecursionLimit',max(500,(end_time-start_time)*2));%if need more set recursion higher
 
 
 mkdir([outputdirectory,suffix,embryonumber,'/nuclei']);
@@ -114,6 +115,18 @@ else
     base=[outputdirectory,suffix,embryonumber,'/nuclei/'];
     output_unlineaged_acetree;
 end
+
+%move output here to save matlab version after tracking
+%if(exist('bigfile')&&bigfile==true)
+savematfile=true;
+if savematfile
+    save([outputdirectory,embryonumber,'_fullmatlabresult.mat'],'-v7.3');
+end
+
+%else
+%    save([outputdirectory,embryonumber,'_fullmatlabresult.mat']);
+%end
+
 zipname=[outputdirectory,embryonumber,'_',suffix,'.zip'];
 zipnameforfile=['./',embryonumber,'_',suffix,'.zip'];
 
@@ -121,7 +134,7 @@ zip(zipname,[outputdirectory,suffix,embryonumber,'/nuclei']);
 %remove temp directory
 
 %wrap because doesn't exist in compiled code.
-if exist('profile','builtin')
+if exist('profile')
 profile viewer; 
 end
 rmdir([outputdirectory,suffix,embryonumber],'s');
@@ -239,7 +252,7 @@ end
 
 fprintf (file,['<nuclei file="',zipnameedited,'"/>\n']);
 
-fprintf (file,'<end index="475"/>\n');
+fprintf (file,strcat('<end index="',num2str(end_time),'"/>\n'));
 fprintf(file,['<resolution xyRes="',num2str(xyres),'" zRes="',num2str(zres),'" planeEnd="',num2str(slices),'"/> <exprCorr type="blot"/>\n']); 
 fprintf (file,'<polar size="15"/>\n');
 fprintf (file,'</embryo>');
@@ -249,7 +262,12 @@ copyfile (zipname,zipnameedited);
 
 %currentdir=pwd;
 %cd ('l:/bin/starryniteII');
-system([' java -Xmx500m -cp acebatch2.jar Measure1 ',xmlname]);
+%system([' java -Xmx500m -cp acebatch2.jar Measure1 ',xmlname]);
+%2019 acebatch2 revisions
+%call and surround xmlname with quotes in case contains spaces'
+%actually took spaces out doesnt seem to work
+system([' java -Xmx500m -jar acebatch2.jar Measure ',xmlname]);
+
 %cd (currentdir);
 
 'lineaging completed'
@@ -257,9 +275,11 @@ system([' java -Xmx500m -cp acebatch2.jar Measure1 ',xmlname]);
 'running expression'
 if(runexpression)
 if(~isred)
-     system(['java -cp acebatch2.jar SixteenBitGreenExtractor1 ',xmlname,' 400']);  
+     %system(['java -cp acebatch2.jar SixteenBitGreenExtractor1 ',xmlname,' 400']);  
+  system(['java -jar acebatch2.jar Extractor ',xmlname,' G ',num2str(end_time)]);  
   
 else
-     system(['java -cp acebatch2.jar SixteenBitRedExtractor1 ',xmlname,' 400']);    
+     %system(['java -cp acebatch2.jar SixteenBitRedExtractor1 ',xmlname,' 400']);  
+     system(['java -cp acebatch2.jar Extractor ',xmlname,' R ',num2str(end_time)]);    
 end
 end
