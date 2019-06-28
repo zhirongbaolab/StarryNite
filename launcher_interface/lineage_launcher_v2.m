@@ -117,8 +117,16 @@ for i=1:length(handles.ROIs)
 %close it
 %paramfilename=[outputdirectory,'/paramfile_',handles.embryoname,suffix,num2str(i,'%04d'),'.txt'];
 
+%note that here would be more ideal to reparse imagefilename retaining
+%stage position and removing spaces etc instead of using embyrodirname whic
+%results in overwriting of param file 
+tempname=imagefilename;
+seploc=strfind(imagefilename,filesep);
+tempname=imagefilename(seploc(end)+1:end-4);
+tempname=strrep(tempname,' ','');
 
-paramfilename=[outputdirectory,'paramfile_',handles.embryodirname,suffix,num2str(i,'%04d'),'.txt'];
+%paramfilename=[outputdirectory,'paramfile_',handles.embryodirname,suffix,num2str(i,'%04d'),'.txt'];
+paramfilename=[outputdirectory,'paramfile_',tempname,suffix,num2str(i,'%04d'),'.txt'];
 
 %paramfilename=[get(handles.outputdir,'String'),'\paramfile_',num2str(i,'%04d'),'_',suffix,'.txt'];
 wrongslashes=findstr(paramfilename,'\');
@@ -129,6 +137,9 @@ copyfile(get(handles.parameterfilename,'String'),paramfilename);
 
 file=fopen(paramfilename,'a');
 
+if(handles.matlabformat)
+    fprintf(file,'MATLAB_STACK=true;\n\r');
+end
 if(get(handles.splitimage,'Value'))
     fprintf(file,'splitstack=true;\n\r ');
 %    fprintf(file,'newscope=true;\n\r');
@@ -224,8 +235,15 @@ points=round(handles.ROIs{i}.getPosition());
 tic
 %%detect_track_driver_allmatlab(parameterfilenames{i},embryodir,handles.embryoname,[suffix,num2str(i)],outputdirectory,points,false);%,lineageparameterfile);
 %this is the good one
-detect_track_driver_allmatlab_v2(parameterfilenames{i},imagefilename,[suffix,num2str(i)],outputdirectory,points,false);
 
+if(get(handles.splitimage,'Value')&& get(handles.green,'Value'))
+    
+    detect_track_driver_allmatlab_v2(parameterfilenames{i},imagefilename,[suffix,num2str(i)],outputdirectory,points,true);
+else
+    %by default assume want to run green expression quantitation
+    detect_track_driver_allmatlab_v2(parameterfilenames{i},imagefilename,[suffix,num2str(i)],outputdirectory,points,false);
+    
+end
 toc
 end
 'all embryos completed'
@@ -354,6 +372,7 @@ ind3=(findstr(PathName,filesep));
 ind3=ind3(length(ind3)-1);%take second to last occurance of dir delimater
 handles.embryodirname=PathName(ind3+1:length(PathName)-1);%end dir name
 handles.embryodir=PathName;%vs full path
+suffix=FileName(ind2+1:length(FileName));
 
 %{
 %looks for the 
@@ -379,6 +398,14 @@ else
     else
   %}      
 
+if (strcmp(suffix,'mat'))
+    load([PathName,FileName]);
+    X=stack;
+    clear stack;
+    handles.matlabformat=true;
+    im=max(X,[],3);
+else
+    handles.matlabformat=false;
 if(get(handles.splitimage,'Value'))
     if(get(handles.green,'Value'))
         X=im2double(((loadCellStackMetamorph([PathName,FileName(1:ind-1)],framenum,2,30,[0,0,0,0],false))));
@@ -396,7 +423,8 @@ else
     end
 
 end
-    if(get(handles.splitimage,'Value'))
+end
+    if(get(handles.flipimagesbox,'Value'))
         im=fliplr(im);
     end
 
