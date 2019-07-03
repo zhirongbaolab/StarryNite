@@ -73,6 +73,8 @@ processSequence;
 'detection completed, beginning lineaging'
 set(0,'RecursionLimit',max(500,(end_time-start_time)*2));%if need more set recursion higher
 
+embryonumber=strrep(embryonumber,' ','');
+
 
 mkdir([outputdirectory,suffix,embryonumber,'/nuclei']);
 
@@ -116,6 +118,7 @@ else
     output_unlineaged_acetree;
 end
 
+
 %move output here to save matlab version after tracking
 %if(exist('bigfile')&&bigfile==true)
 savematfile=true;
@@ -126,6 +129,7 @@ end
 %else
 %    save([outputdirectory,embryonumber,'_fullmatlabresult.mat']);
 %end
+
 
 zipname=[outputdirectory,embryonumber,'_',suffix,'.zip'];
 zipnameforfile=['./',embryonumber,'_',suffix,'.zip'];

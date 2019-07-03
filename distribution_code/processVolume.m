@@ -27,9 +27,9 @@ else
 end
 
 %replace distribution for 10thround
-if(numcells>351)
-    load(distribution_file2);
-end
+%if(numcells>351)
+%    load(distribution_file2);
+%end
 
 
 sigma=celldiameter*getParameter('sigma',numcells);
