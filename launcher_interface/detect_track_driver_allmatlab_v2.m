@@ -79,6 +79,21 @@ embryonumber=strrep(embryonumber,' ','');
 mkdir([outputdirectory,suffix,embryonumber,'/nuclei']);
 
 
+ for i=1:length(esequence)
+        if(~isempty(esequence{i}))
+            if(~isempty(esequence{i}.finalpoints))
+                      
+                %add compensation for downsampling back in, where did it
+                %get lost?
+                esequence{i}.finalpoints(:,1:2)=esequence{i}.finalpoints(:,1:2)./downsample;
+                esequence{i}.finaldiams=esequence{i}.finaldiams./downsample;
+                esequence{i}.finalaveragepoints(:,1:2)=esequence{i}.finalaveragepoints(:,1:2)./downsample;
+                
+            end
+        end
+ end
+
+
 if (end_time-start_time>0)
     %parameterConfiguration;
     %parameterfile=lineageParameterFileName;
@@ -102,6 +117,7 @@ if(start_time~=1)
         end
     end
 %}    
+    
     saveGreedyNucleiFiles(esequence,endtime,[outputdirectory,suffix,embryonumber,'/nuclei'],anisotropy,ROIxmin,ROIymin);
 else
       %now done in detection 

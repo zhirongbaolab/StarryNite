@@ -5,7 +5,7 @@ diskSet=struct;
 
 %2d max
 Xmax2d=zeros(size(X),'int8');
-parfor i=1:s(3)
+for i=1:s(3)
     Xmax2d(:,:,i)=imregionalmax(X(:,:,i));
 end
 

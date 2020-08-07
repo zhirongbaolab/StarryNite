@@ -67,7 +67,7 @@ for example=1:length(tlist)
         X=stack;%(:,:,1:slices);
         clear('stack');
         %X=X(:,:,1:slices);
-        pause(1);%make easily ctrl-c able?
+       % pause(1);%make easily ctrl-c able?
     else
         %old gui used newscope flag which was always a weird historical
         %choice, splitstack is used by new UI 
@@ -167,8 +167,8 @@ for example=1:length(tlist)
             
             %output slices before subsampling via ROI
             if(outputSlice)
-                minval=approximateMatrixPercentile(X,outputSlice_linptilem,round((2^16)/10));
-                maxval=approximateMatrixPercentile(X,outputSlice_linptile,round((2^16)/10));
+                minval=approximateMatrixPercentile(imresize(X,downsample),outputSlice_linptilem,round((2^16)/10));
+                maxval=approximateMatrixPercentile(imresize(X,downsample),outputSlice_linptile,round((2^16)/10));
                 
         if(exist('splitstack','var')&&splitstack)
                     if(rednuclei)
@@ -286,7 +286,7 @@ if (bottomdetection&&~singlevolume&&nodatause)
     clear X;
     clear Xr;
 
-    backup_esequence=esequence;
+    % backup_esequence=esequence;
     
     for i=1:length(esequence)
         if(~isempty(esequence{i}))
@@ -297,9 +297,9 @@ if (bottomdetection&&~singlevolume&&nodatause)
                 esequence{i}.finalmaximas=esequence{i}.finalmaximas(goodpoints,:);
                 esequence{i}.finalaveragepoints=esequence{i}.finalaveragepoints(goodpoints,:);
                 esequence{i}.merged_sliceindicies=esequence{i}.merged_sliceindicies(goodpoints);
-                
                 esequence{i}.aspectratio=esequence{i}.aspectratio(goodpoints);
-            end
+                
+                    end
             
         end
         if (~nodata)

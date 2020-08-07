@@ -109,7 +109,8 @@ end
 
     %disk representation
 nucleiSet=struct;
-[diskSet,nucleiSet.centerindicies]=createDiskSet(X,maximathreshold,zlevel,celldiameter,anisotropy,numcells,ROIpoints,ROI,ROIxmin,ROIymin);
+[diskSet,nucleiSet.centerindicies]=...
+    createDiskSet(X,maximathreshold,zlevel,celldiameter,anisotropy,numcells,ROIpoints*downsample,ROI,ROIxmin*downsample,ROIymin*downsample);
 
 %create GFP sum and area for each slice
 diskSet=calculateSliceGFP(Xorig,diskSet);
