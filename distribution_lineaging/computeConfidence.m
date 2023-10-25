@@ -9,6 +9,9 @@ consum=consum+esequence{t}.confidences(i,:);
 ttemp=t;
 t=esequence{t}.suc_time(i,1);
 i=esequence{ttemp}.suc(i,1);
+    if i==-1
+        break
+    end
 end
 
 end
