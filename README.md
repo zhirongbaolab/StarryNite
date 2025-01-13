@@ -8,7 +8,8 @@ Documentation contains specifications for auxinfo(embryo orientation file) forma
 
 Example parameter files for all microscopes/standard aquisition settings in the Bao lab are in example parameter files versions in newmatlab and oldmatlab reference different bayesian classifiers types Matlab 2014b- supports only old, 2017a+ only new, not sure what status inbetween is. Parameter files with same name are otherwise identical.
 
-Current .exe binary was compiled with 2014b.
+Starrynite.exe and Starrynite2019.exe binary were compiled with 2014b and should be used with 'old' parameter files.
+Starrynite2025.exe is compiled with Matlab 2023b and should be used with 'new' parameter files.
 
 Code overview below:
 
